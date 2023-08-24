@@ -11,6 +11,7 @@ export function ProductItem({
   image,
   quantity,
   name,
+  bar_code,
   conference: { status },
 }: OrderProductProps) {
   const { refetch } = useOrder();
@@ -48,6 +49,7 @@ export function ProductItem({
       />
       <div className="flex flex-col justify-between">
         <h2 className="font-semibold text-base">{name}</h2>
+        <span>{bar_code}</span>
         <div className="flex justify-between items-end">
           <div className="flex flex-col">
             <span className="font-bold text-4xl text-orange-barapi">
