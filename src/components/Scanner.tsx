@@ -3,7 +3,7 @@
 import Quagga from "quagga-scanner";
 import { useEffect, useRef, useState } from "react";
 
-export const BarcodeScanner = () => {
+export function BarcodeScanner() {
   const videoRef = useRef(null);
   const [barcode, setBarcode] = useState("");
   useEffect(() => {
@@ -15,13 +15,11 @@ export const BarcodeScanner = () => {
           target: videoRef.current,
           area: {
             top: "25%",
-            left: "25%",
-            right: "25%",
             bottom: "25%",
+            left: "10%",
+            right: "10%",
           },
           constraints: {
-            width: 640,
-            height: 480,
             facingMode: "environment",
           },
         },
@@ -45,45 +43,11 @@ export const BarcodeScanner = () => {
       }
     );
 
-    Quagga.onProcessed(function (result) {
-      var drawingCtx = Quagga.canvas.ctx.overlay,
-        drawingCanvas = Quagga.canvas.dom.overlay;
-
+    Quagga.onDetected(function (result) {
       if (result) {
-        // if (result.boxes) {
-        //   drawingCtx.clearRect(
-        //     0,
-        //     0,
-        //     parseInt(drawingCanvas.getAttribute("width")),
-        //     parseInt(drawingCanvas.getAttribute("height"))
-        //   );
-        //   result.boxes
-        //     .filter(function (box) {
-        //       return box !== result.box;
-        //     })
-        //     .forEach(function (box) {
-        //       Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, {
-        //         color: "#ff4f00",
-        //         lineWidth: 6,
-        //       });
-        //     });
-        // }
-
-        if (result.box) {
-          Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, {
-            color: "#00F",
-            lineWidth: 2,
-          });
-        }
-
         if (result.codeResult && result.codeResult.code) {
           setBarcode(result.codeResult.code);
-          Quagga.ImageDebug.drawPath(
-            result.line,
-            { x: "x", y: "y" },
-            drawingCtx,
-            { color: "red", lineWidth: 3 }
-          );
+          console.log(result.codeResult.code);
         }
       }
     });
@@ -94,16 +58,18 @@ export const BarcodeScanner = () => {
   }, []);
 
   return (
-    <>
+    <div className="max-w-lg mx-auto max-h-[32rem] relative flex  flex-col gap-2">
       <div className="relative">
         <div
-          className="relative viewport"
+          className="relative viewport rounded-md overflow-hidden"
           id="interactive"
           ref={videoRef}
         ></div>
-        <div className="border-2 absolute z-10 top-1/4 bottom-1/4 left-1/4 right-1/4"></div>
+        <div className="border-4 rounded-2xl absolute z-10 top-1/4 bottom-1/4 left-[10%] right-[10%]"></div>
       </div>
-      <span>{barcode}</span>
-    </>
+      <button className="bg-orange-barapi text-white py-3 w-4/5 font-bold rounded-md mx-auto">
+        Força check
+      </button>
+    </div>
   );
-};
+}
