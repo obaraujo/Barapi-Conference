@@ -2,7 +2,7 @@ import { ReactNode, createContext, useContext, useState } from "react";
 import { useQuery } from "react-query";
 import { apiBarapiV2 } from "services/api";
 
-interface OrderProductProps {
+export interface OrderProductProps {
   id: number;
   product_id: number;
   name: string;
@@ -43,6 +43,7 @@ interface OrderContextProps {
     revision: number;
     complete: number;
   };
+  refetch: () => void;
 }
 const OrderContext = createContext<OrderContextProps>({} as OrderContextProps);
 
@@ -61,7 +62,11 @@ export function OrderContextProvider({
     OrderContextProps["quantityItems"]
   >({ pending: 0, revision: 0, complete: 0 });
 
-  const { isError, data: orderData } = useQuery(
+  const {
+    isError,
+    data: orderData,
+    refetch,
+  } = useQuery(
     `get_order_products_${orderId}`,
     async () => {
       const { data } = await apiBarapiV2.get<orderDataProps>(
@@ -100,14 +105,14 @@ export function OrderContextProvider({
       return newData;
     },
 
-    { onError: (e) => console.log(e) }
+    { onError: (e) => console.log(e), refetchInterval: 3000 }
   );
   if (isError) {
     console.log("deu");
   }
 
   return (
-    <OrderContext.Provider value={{ orderData, quantityItems }}>
+    <OrderContext.Provider value={{ orderData, quantityItems, refetch }}>
       {children}
     </OrderContext.Provider>
   );
