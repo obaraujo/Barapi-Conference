@@ -3,7 +3,6 @@ import Loading from "app/loading";
 import { useOrder } from "contexts/order";
 import { useState } from "react";
 import { ProductItem } from "./ProductItem";
-import { BarcodeScanner } from "./Scanner";
 
 export function ContentSection({
   status,
@@ -23,7 +22,6 @@ export function ContentSection({
           })
         ) : (
           <>
-            <BarcodeScanner />
             <div className="flex items-center justify-center ">
               Opa! Ainda não há nenhum produto aqui.
             </div>
