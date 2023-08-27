@@ -12,6 +12,9 @@
       ],
       "@/components/*": [
         "components/*"
+      ],
+      "@/types/*": [
+        "@types/*"
       ]
     },
     "allowJs": true,

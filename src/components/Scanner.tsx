@@ -1,49 +1,113 @@
 "use client";
+import Quagga from "quagga";
+import { useEffect, useReducer, useRef, useState } from "react";
 
-import Quagga from "quagga-scanner";
-import { useEffect, useRef, useState } from "react";
+import { QuaggaJSConfigObject } from "@/types/quagga";
+import { Cross2Icon, MixerHorizontalIcon } from "@radix-ui/react-icons";
+import * as Popover from "@radix-ui/react-popover";
+import "./styles.css";
+
+interface actionScannerConfigProps {
+  name: "deviceId";
+  payload: any;
+}
 
 export function BarcodeScanner() {
   const videoRef = useRef(null);
   const [barcode, setBarcode] = useState("");
-  useEffect(() => {
-    Quagga.init(
-      {
-        inputStream: {
-          name: "Live",
-          type: "LiveStream",
-          target: videoRef.current,
-          area: {
-            top: "25%",
-            bottom: "25%",
-            left: "10%",
-            right: "10%",
-          },
-          constraints: {
-            facingMode: "environment",
-          },
-        },
-        locator: {
-          patchSize: "medium",
-          halfSample: true,
-        },
-        numOfWorkers: 2,
-        frequency: 10,
-        decoder: {
-          readers: ["ean_reader"],
-        },
-        locate: true,
-      },
-      (err) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        Quagga.start();
+  const [scannerConfig, dispatch] = useReducer(
+    (state: QuaggaJSConfigObject, action: actionScannerConfigProps) => {
+      let newState: QuaggaJSConfigObject = {} as QuaggaJSConfigObject;
+      switch (action.name) {
+        case "deviceId":
+          newState = {
+            ...state,
+            inputStream: {
+              ...state.inputStream,
+              constraints: {
+                ...state.inputStream.constraints,
+                deviceId: action.payload,
+              },
+            },
+          };
+          break;
       }
-    );
+      return newState;
+    },
+    {
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: videoRef.current,
+        area: {
+          top: "25%",
+          bottom: "25%",
+          left: "10%",
+          right: "10%",
+        },
+        constraints: {
+          width: { min: 30 },
+          height: { min: 40 },
+          facingMode: "environment",
+          aspectRatio: window.innerHeight / window.innerWidth,
+          deviceId:
+            "b91e47c2e8a99c858376e0b6cf4ec43a9e184b597488ab0c1e225936896b6924",
+        },
+      },
+      locator: {
+        patchSize: "medium",
+        halfSample: true,
+      },
+      numOfWorkers: 2,
+      frequency: 10,
+      decoder: {
+        readers: [
+          {
+            format: "code_128_reader",
+            config: { supplements: [] },
+          },
+        ],
+      },
+      locate: true,
+    }
+  );
+  const [devices, setDevices] = useState<{ name: string; id: string }[]>([]);
+  const [capabilities, setCapabilities] = useState({});
+  const [flash, setFlash] = useState([]);
+  console.log(devices);
 
-    Quagga.onDetected(function (result) {
+  useEffect(() => {
+    Quagga.CameraAccess.enumerateVideoDevices().then(function (devices) {
+      setDevices(
+        devices.map((device) => {
+          return {
+            name: device.label || device.deviceId,
+            id: device.deviceId,
+          };
+        })
+      );
+    });
+  }, []);
+
+  useEffect(() => {
+    Quagga.init(scannerConfig, (err: any) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      var track = Quagga.CameraAccess.getActiveTrack();
+      var capabilities = {};
+      if (typeof track.getCapabilities === "function") {
+        capabilities = track.getCapabilities();
+      }
+      // track.applyConstraints({advanced: [{torch: false}]})
+      //track.applyConstraints({advanced: [{zoom: parseFloat(value)}]});
+      setCapabilities(capabilities);
+
+      Quagga.start();
+    });
+
+    Quagga.onDetected(function (result: any) {
       if (result) {
         if (result.codeResult && result.codeResult.code) {
           setBarcode(result.codeResult.code);
@@ -55,21 +119,81 @@ export function BarcodeScanner() {
     return () => {
       Quagga.stop();
     };
-  }, []);
+  }, [scannerConfig]);
+
+  function handleFlash(state: boolean) {
+    const track = Quagga.CameraAccess.getActiveTrack();
+    // track.applyConstraints({ advanced: [{ deviceId: state }] });
+  }
+
+  function handleSelectDevice(deviceId: string) {
+    dispatch({ name: "deviceId", payload: deviceId });
+  }
 
   return (
-    <div className="max-w-lg mx-auto max-h-[32rem] relative flex  flex-col gap-2">
+    <div className="mx-auto relative flex  flex-col gap-2">
       <div className="relative">
         <div
           className="relative viewport rounded-md overflow-hidden"
           id="interactive"
           ref={videoRef}
         ></div>
-        <div className="border-4 rounded-2xl absolute z-10 top-1/4 bottom-1/4 left-[10%] right-[10%]"></div>
+        <div className="border-4 rounded-2xl absolute z-10 top-1/4 bottom-1/4 left-[10%] right-[10%]">
+          {barcode}
+        </div>
+        <button className="bg-black text-white py-3 w-4/5 font-bold rounded-md mx-auto">
+          Força check
+        </button>
+        <Popover.Root>
+          <Popover.Trigger asChild>
+            <button
+              className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-violet11 bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:bg-[#ff4f00] hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
+              aria-label="Update dimensions"
+            >
+              <MixerHorizontalIcon />
+            </button>
+          </Popover.Trigger>
+          <Popover.Portal className="">
+            <Popover.Content
+              className="rounded p-5 w-[260px] relative z-50 bg-white shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade"
+              sideOffset={5}
+            >
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-1">
+                  <select
+                    className="px-2 py-2 rounded-md"
+                    id="devices"
+                    onChange={(e) => handleSelectDevice(e.currentTarget.value)}
+                  >
+                    {devices.map((device) => {
+                      return (
+                        <option key={device.id} value={device.id}>
+                          {device.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="flex gap-1">
+                  <input
+                    type="checkbox"
+                    id="flash"
+                    onChange={(e) => handleFlash(e.currentTarget.checked)}
+                  />
+                  <label htmlFor="flash">Flash</label>
+                </div>
+              </div>
+              <Popover.Close
+                className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
+                aria-label="Close"
+              >
+                <Cross2Icon />
+              </Popover.Close>
+              <Popover.Arrow className="fill-white" />
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
       </div>
-      <button className="bg-orange-barapi text-white py-3 w-4/5 font-bold rounded-md mx-auto">
-        Força check
-      </button>
     </div>
   );
 }
