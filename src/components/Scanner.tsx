@@ -60,7 +60,7 @@ export function BarcodeScanner() {
           width: { min: 30 },
           height: { min: 40 },
           facingMode: "environment",
-          aspectRatio: window.innerHeight / window.innerWidth,
+          aspectRatio: 1,
         },
       },
       locator: {
