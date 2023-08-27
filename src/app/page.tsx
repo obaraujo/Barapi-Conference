@@ -1,3 +1,4 @@
+"use client";
 import { BarcodeScanner } from "@/components/Scanner";
 
 export default function Page() {
