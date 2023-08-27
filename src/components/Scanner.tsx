@@ -5,7 +5,6 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import { QuaggaJSConfigObject } from "@/types/quagga";
 import { Cross2Icon, MixerHorizontalIcon } from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
-import "./styles.css";
 
 interface actionScannerConfigProps {
   name: "deviceId" | "aspectRatio";
