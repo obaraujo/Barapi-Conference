@@ -8,7 +8,7 @@ import * as Popover from "@radix-ui/react-popover";
 import "./styles.css";
 
 interface actionScannerConfigProps {
-  name: "deviceId";
+  name: "deviceId" | "aspectRatio";
   payload: any;
 }
 
@@ -27,6 +27,18 @@ export function BarcodeScanner() {
               constraints: {
                 ...state.inputStream.constraints,
                 deviceId: action.payload,
+              },
+            },
+          };
+          break;
+        case "aspectRatio":
+          newState = {
+            ...state,
+            inputStream: {
+              ...state.inputStream,
+              constraints: {
+                ...state.inputStream.constraints,
+                aspectRatio: action.payload,
               },
             },
           };
@@ -50,8 +62,6 @@ export function BarcodeScanner() {
           height: { min: 40 },
           facingMode: "environment",
           aspectRatio: window.innerHeight / window.innerWidth,
-          deviceId:
-            "b91e47c2e8a99c858376e0b6cf4ec43a9e184b597488ab0c1e225936896b6924",
         },
       },
       locator: {
@@ -87,6 +97,11 @@ export function BarcodeScanner() {
         })
       );
     });
+
+    dispatch({
+      name: "aspectRatio",
+      payload: window.innerHeight / window.innerWidth,
+    });
   }, []);
 
   useEffect(() => {
@@ -102,9 +117,54 @@ export function BarcodeScanner() {
       }
       // track.applyConstraints({advanced: [{torch: false}]})
       //track.applyConstraints({advanced: [{zoom: parseFloat(value)}]});
-      setCapabilities(capabilities);
 
       Quagga.start();
+
+      setCapabilities(capabilities);
+    });
+
+    Quagga.onProcessed(function (result) {
+      var drawingCtx = Quagga.canvas.ctx.overlay,
+        drawingCanvas = Quagga.canvas.dom.overlay;
+
+      if (result) {
+        if (result.boxes) {
+          drawingCtx.clearRect(
+            0,
+            0,
+            parseInt(drawingCanvas.getAttribute("width")),
+            parseInt(drawingCanvas.getAttribute("height"))
+          );
+          result.boxes
+            .filter(function (box) {
+              return box !== result.box;
+            })
+            .forEach(function (box) {
+              Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, {
+                color: "green",
+                lineWidth: 2,
+              });
+            });
+        }
+
+        if (result.box) {
+          Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, {
+            color: "#00F",
+            lineWidth: 2,
+          });
+        }
+        console.log(result);
+
+        if (result.codeResult && result.codeResult.code) {
+          setBarcode(result.codeResult.code);
+          Quagga.ImageDebug.drawPath(
+            result.line,
+            { x: "x", y: "y" },
+            drawingCtx,
+            { color: "red", lineWidth: 3 }
+          );
+        }
+      }
     });
 
     Quagga.onDetected(function (result: any) {
