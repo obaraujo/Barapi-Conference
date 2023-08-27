@@ -5,7 +5,6 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import { QuaggaJSConfigObject } from "@/types/quagga";
 import { Cross2Icon, MixerHorizontalIcon } from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
-import "./styles.css";
 
 interface actionScannerConfigProps {
   name: "deviceId";
@@ -39,6 +38,7 @@ export function BarcodeScanner() {
         name: "Live",
         type: "LiveStream",
         target: videoRef.current,
+        singleChannel: false,
         area: {
           top: "25%",
           bottom: "25%",
@@ -50,23 +50,16 @@ export function BarcodeScanner() {
           height: { min: 40 },
           facingMode: "environment",
           aspectRatio: window.innerHeight / window.innerWidth,
-          deviceId:
-            "b91e47c2e8a99c858376e0b6cf4ec43a9e184b597488ab0c1e225936896b6924",
         },
       },
       locator: {
-        patchSize: "medium",
+        patchSize: "large",
         halfSample: true,
       },
-      numOfWorkers: 2,
+      numOfWorkers: 4,
       frequency: 10,
       decoder: {
-        readers: [
-          {
-            format: "code_128_reader",
-            config: { supplements: [] },
-          },
-        ],
+        readers: ["code_128_reader"],
       },
       locate: true,
     }
@@ -107,6 +100,50 @@ export function BarcodeScanner() {
       Quagga.start();
     });
 
+    Quagga.onProcessed(function (result) {
+      var drawingCtx = Quagga.canvas.ctx.overlay,
+        drawingCanvas = Quagga.canvas.dom.overlay;
+
+      if (result) {
+        if (result.boxes) {
+          drawingCtx.clearRect(
+            0,
+            0,
+            parseInt(drawingCanvas.getAttribute("width")),
+            parseInt(drawingCanvas.getAttribute("height"))
+          );
+          result.boxes
+            .filter(function (box) {
+              return box !== result.box;
+            })
+            .forEach(function (box) {
+              Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, {
+                color: "green",
+                lineWidth: 2,
+              });
+            });
+        }
+
+        if (result.box) {
+          Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, {
+            color: "#00F",
+            lineWidth: 2,
+          });
+        }
+        console.log(result);
+
+        if (result.codeResult && result.codeResult.code) {
+          setBarcode(result.codeResult.code);
+          Quagga.ImageDebug.drawPath(
+            result.line,
+            { x: "x", y: "y" },
+            drawingCtx,
+            { color: "red", lineWidth: 3 }
+          );
+        }
+      }
+    });
+
     Quagga.onDetected(function (result: any) {
       if (result) {
         if (result.codeResult && result.codeResult.code) {
@@ -131,15 +168,15 @@ export function BarcodeScanner() {
   }
 
   return (
-    <div className="mx-auto relative flex  flex-col gap-2">
+    <div className="mx-auto fixed inset-0 flex z-10  flex-col gap-2">
       <div className="relative">
         <div
           className="relative viewport rounded-md overflow-hidden"
           id="interactive"
           ref={videoRef}
         ></div>
-        <div className="border-4 rounded-2xl absolute z-10 top-1/4 bottom-1/4 left-[10%] right-[10%]">
-          {barcode}
+        <div className="border-4 rounded-2xl absolute z-20 top-1/4 bottom-1/4 left-[10%] right-[10%]">
+          code: {barcode}
         </div>
         <button className="bg-black text-white py-3 w-4/5 font-bold rounded-md mx-auto">
           Força check
