@@ -67,15 +67,10 @@ export function BarcodeScanner() {
         patchSize: "medium",
         halfSample: true,
       },
-      numOfWorkers: 2,
+      numOfWorkers: 4,
       frequency: 10,
       decoder: {
-        readers: [
-          {
-            format: "code_128_reader",
-            config: { supplements: [] },
-          },
-        ],
+        readers: ["code_128_reader"],
       },
       locate: true,
     }
@@ -84,6 +79,7 @@ export function BarcodeScanner() {
   const [capabilities, setCapabilities] = useState({});
   const [flash, setFlash] = useState([]);
   console.log(devices);
+  console.log(capabilities);
 
   useEffect(() => {
     Quagga.CameraAccess.enumerateVideoDevices().then(function (devices) {
