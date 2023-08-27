@@ -76,7 +76,10 @@ export function BarcodeScanner() {
     }
   );
   const [devices, setDevices] = useState<{ name: string; id: string }[]>([]);
-  const [capabilities, setCapabilities] = useState({});
+  const [capabilities, setCapabilities] = useState<{
+    torch?: boolean;
+    zoom?: { max: number; min: number; step: number };
+  }>({});
   const [flash, setFlash] = useState([]);
   console.log(devices);
   console.log(capabilities);
@@ -178,7 +181,11 @@ export function BarcodeScanner() {
 
   function handleFlash(state: boolean) {
     const track = Quagga.CameraAccess.getActiveTrack();
-    // track.applyConstraints({ advanced: [{ deviceId: state }] });
+    track.applyConstraints({ advanced: [{ torch: state }] });
+  }
+  function handleZoom(value: string) {
+    const track = Quagga.CameraAccess.getActiveTrack();
+    track.applyConstraints({ advanced: [{ zoom: parseFloat(value) }] });
   }
 
   function handleSelectDevice(deviceId: string) {
@@ -186,7 +193,7 @@ export function BarcodeScanner() {
   }
 
   return (
-    <div className="mx-auto relative flex  flex-col gap-2">
+    <div className="mx-auto fixed inset-0 flex  flex-col gap-2">
       <div className="relative">
         <div
           className="relative viewport rounded-md overflow-hidden"
@@ -229,14 +236,27 @@ export function BarcodeScanner() {
                     })}
                   </select>
                 </div>
-                <div className="flex gap-1">
-                  <input
-                    type="checkbox"
-                    id="flash"
-                    onChange={(e) => handleFlash(e.currentTarget.checked)}
-                  />
-                  <label htmlFor="flash">Flash</label>
-                </div>
+                {capabilities?.torch && (
+                  <div className="flex gap-1">
+                    <input
+                      type="checkbox"
+                      id="flash"
+                      onChange={(e) => handleFlash(e.currentTarget.checked)}
+                    />
+                    <label htmlFor="flash">Flash</label>
+                  </div>
+                )}
+                {capabilities?.zoom && (
+                  <div className="flex gap-1">
+                    <input
+                      onChange={(e) => handleZoom(e.currentTarget.value)}
+                      type="range"
+                      min={capabilities.zoom.min}
+                      max={capabilities.zoom.max}
+                      step={capabilities.zoom.step}
+                    />
+                  </div>
+                )}
               </div>
               <Popover.Close
                 className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
