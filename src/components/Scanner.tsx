@@ -1,22 +1,18 @@
 import { Cross2Icon, MixerHorizontalIcon } from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
+import { useScanner } from "contexts/scanner";
 import { CameraDevice, Html5Qrcode } from "html5-qrcode";
 import { useEffect, useRef, useState } from "react";
 
 interface BarcodeScannerProps {
   onRead: (value: string) => void;
-  setActive: (value: boolean) => void;
-  active: boolean;
 }
 
-export function BarcodeScanner({
-  onRead,
-  setActive,
-  active,
-}: BarcodeScannerProps) {
+export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [cameraActiveId, setCameraActiveId] = useState<string>("");
   const [isScanning, setIsScanning] = useState<boolean>(false);
+  const { setProductFetched, productFetched } = useScanner();
   const scanRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
@@ -34,8 +30,12 @@ export function BarcodeScanner({
   }, []);
 
   useEffect(() => {
-    if (active) startScan();
-  }, [cameraActiveId, scanRef.current, active]);
+    if (!!productFetched) {
+      startScan();
+    } else if (scanRef.current?.isScanning) {
+      scanRef.current.stop();
+    }
+  }, [cameraActiveId, scanRef.current, productFetched]);
 
   async function startScan() {
     if (cameraActiveId && scanRef.current) {
@@ -55,7 +55,10 @@ export function BarcodeScanner({
         (data) => {
           onRead(data);
           scanRef.current &&
-            scanRef.current.stop().then((ignore) => setActive(false));
+            scanRef.current.stop().then((ignore) => {
+              setProductFetched(null);
+              setIsScanning(false);
+            });
         },
         (e) => setIsScanning(!!scanRef.current?.isScanning)
       );
@@ -65,15 +68,22 @@ export function BarcodeScanner({
   return (
     <div
       className="fixed inset-0 z-50 data-[active=false]:invisible"
-      data-active={isScanning && scanRef.current?.isScanning}
+      data-active={
+        isScanning && scanRef.current?.isScanning && !!productFetched
+      }
     >
+      <button
+        className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
+        onClick={() => {
+          setProductFetched(null);
+        }}
+      >
+        <Cross2Icon accentHeight={24} />
+      </button>
       <div id="scanner_barapi"></div>
       <Popover.Root>
         <Popover.Trigger asChild>
-          <button
-            className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:bg-orange-barapi hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
-            aria-label="Update dimensions"
-          >
+          <button className="absolute top-4 left-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none">
             <MixerHorizontalIcon />
           </button>
         </Popover.Trigger>
@@ -85,7 +95,7 @@ export function BarcodeScanner({
             <div className="flex flex-col gap-2">
               <div className="flex gap-1">
                 <select
-                  className="px-2 py-2 rounded-md"
+                  className="px-2 py-2 rounded-md w-[20ch]"
                   id="devices"
                   value={cameraActiveId}
                   onChange={(e) => {
