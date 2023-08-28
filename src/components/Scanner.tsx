@@ -6,9 +6,14 @@ import { useEffect, useRef, useState } from "react";
 interface BarcodeScannerProps {
   onRead: (value: string) => void;
   setActive: (value: boolean) => void;
+  active: boolean;
 }
 
-export function BarcodeScanner({ onRead, setActive }: BarcodeScannerProps) {
+export function BarcodeScanner({
+  onRead,
+  setActive,
+  active,
+}: BarcodeScannerProps) {
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [cameraActiveId, setCameraActiveId] = useState<string>("");
   const [isScanning, setIsScanning] = useState<boolean>(false);
@@ -29,8 +34,8 @@ export function BarcodeScanner({ onRead, setActive }: BarcodeScannerProps) {
   }, []);
 
   useEffect(() => {
-    startScan();
-  }, [cameraActiveId, scanRef.current]);
+    if (active) startScan();
+  }, [cameraActiveId, scanRef.current, active]);
 
   async function startScan() {
     if (cameraActiveId && scanRef.current) {
@@ -58,7 +63,10 @@ export function BarcodeScanner({ onRead, setActive }: BarcodeScannerProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div
+      className="fixed inset-0 z-50 data-[active=false]:hidden"
+      data-active={isScanning && scanRef.current?.isScanning}
+    >
       <div id="scanner_barapi"></div>
       <Popover.Root>
         <Popover.Trigger asChild>
