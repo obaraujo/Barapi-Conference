@@ -56,12 +56,12 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   }
 
   return (
-    <div className="">
+    <div className="fixed inset-0">
       <div id="scanner_barapi"></div>
       <Popover.Root>
         <Popover.Trigger asChild>
           <button
-            className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-violet11 bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:bg-[#ff4f00] hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
+            className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:bg-orange-barapi hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
             aria-label="Update dimensions"
           >
             <MixerHorizontalIcon />
