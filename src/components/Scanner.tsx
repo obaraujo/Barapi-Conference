@@ -56,7 +56,6 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
           onRead(data);
           scanRef.current &&
             scanRef.current.stop().then((ignore) => {
-              setProductFetched(null);
               setIsScanning(false);
             });
         },
