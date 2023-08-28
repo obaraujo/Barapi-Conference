@@ -1,10 +1,15 @@
+"use client";
+
 import { BarcodeScanner } from "@/components/Scanner";
+import { useState } from "react";
 
 export default function Page() {
+  const [decodedResults, setDecodedResult] = useState("");
+
   return (
     <>
-      <BarcodeScanner />
-      <h1 className="text-sm">Hello, Next.s!</h1>
+      <BarcodeScanner onRead={setDecodedResult} />
+      <h1 className="text-sm">{decodedResults}</h1>
     </>
   );
 }
