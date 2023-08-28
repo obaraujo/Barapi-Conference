@@ -1,7 +1,8 @@
 import { Image } from "@/components/Image";
+import { formatCurrencyBRL } from "barapi";
 import { OrderProductProps, useOrder } from "contexts/order";
-import { getInfoQuantity } from "functions";
-import { useState } from "react";
+import { useScanner } from "contexts/scanner";
+import { useEffect, useState } from "react";
 import { BsFillCheckSquareFill } from "react-icons/bs";
 import { ImClock } from "react-icons/im";
 import { apiBarapiV2 } from "services/api";
@@ -12,10 +13,19 @@ export function ProductItem({
   quantity,
   name,
   bar_code,
+  price,
   conference: { status },
 }: OrderProductProps) {
   const { refetch } = useOrder();
   const [disabled, setDisabled] = useState(false);
+  const { setActiveScanner, barcode } = useScanner();
+  console.log(barcode);
+
+  useEffect(() => {
+    if (bar_code === barcode) {
+      handleCheck();
+    }
+  }, [barcode]);
 
   async function handleCheck() {
     setDisabled(true);
@@ -49,14 +59,13 @@ export function ProductItem({
       />
       <div className="flex flex-col justify-between">
         <h2 className="font-semibold text-base">{name}</h2>
-        <span>{bar_code}</span>
         <div className="flex justify-between items-end">
           <div className="flex flex-col">
             <span className="font-bold text-4xl text-orange-barapi">
               {quantity}x
             </span>
             <span className="font-semibold text-sm text-black/30">
-              {getInfoQuantity(name)}
+              {formatCurrencyBRL(price)}
             </span>
           </div>
           {status !== "complete" && (
@@ -73,7 +82,7 @@ export function ProductItem({
               )}
               <button
                 disabled={disabled}
-                onClick={handleCheck}
+                onClick={() => setActiveScanner(true)}
                 className="flex gap-1 items-center bg-green-barapi rounded-lg text-white font-bold px-6 h-11 disabled:bg-gray-400"
               >
                 {/* <BiScan />  */}

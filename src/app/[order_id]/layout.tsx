@@ -4,6 +4,7 @@ import { Navigation } from "@/components/Navigation";
 
 import "@/styles/globals.css";
 import { OrderContextProvider } from "contexts/order";
+import { ScannerProvider } from "contexts/scanner";
 import Image from "next/image";
 import { QueryClient, QueryClientProvider } from "react-query";
 
@@ -23,7 +24,7 @@ export default function ConferenceLayout({
           <Image src="/logo.svg" alt="" width={124} height={15} />
           <h1 className="font-bold text-lg mt-4">Compra #{order_id}</h1>
         </header>
-        {children}
+        <ScannerProvider>{children}</ScannerProvider>
         <footer className="mt-20">
           <Navigation prefix={order_id.toString()} />
         </footer>

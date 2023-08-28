@@ -14,7 +14,7 @@ export function ContentSection({
   const [bar, setBar] = useState();
 
   return (
-    <div ref={parent} className="mt-4">
+    <div ref={parent} className="mt-4 z-0">
       {orderData?.products ? (
         orderData.products[status].length > 0 ? (
           orderData.products[status].map((product) => {

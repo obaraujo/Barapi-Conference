@@ -56,7 +56,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   }
 
   return (
-    <div className="fixed inset-0">
+    <div className="fixed inset-0 z-50">
       <div id="scanner_barapi"></div>
       <Popover.Root>
         <Popover.Trigger asChild>
@@ -77,16 +77,13 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
                 <select
                   className="px-2 py-2 rounded-md"
                   id="devices"
+                  value={cameraActiveId}
                   onChange={(e) => {
                     setCameraActiveId(e.currentTarget.value);
                   }}
                 >
                   {devices.map((device) => (
-                    <option
-                      key={device.id}
-                      value={device.id}
-                      selected={cameraActiveId === device.id}
-                    >
+                    <option key={device.id} value={device.id}>
                       {device.label}
                     </option>
                   ))}
