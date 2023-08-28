@@ -64,7 +64,7 @@ export function BarcodeScanner({
 
   return (
     <div
-      className="fixed inset-0 z-50 data-[active=false]:hidden"
+      className="fixed inset-0 z-50 data-[active=false]:invisible"
       data-active={isScanning && scanRef.current?.isScanning}
     >
       <div id="scanner_barapi"></div>
