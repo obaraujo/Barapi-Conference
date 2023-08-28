@@ -22,8 +22,8 @@ export function ProductItem({
   console.log(barcode);
 
   useEffect(() => {
-    console.log(bar_code);
-    console.log(barcode);
+    console.log("original: " + bar_code);
+    console.log("lido: " + barcode);
 
     if (bar_code === barcode) {
       handleCheck();
