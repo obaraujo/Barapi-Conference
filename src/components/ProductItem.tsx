@@ -22,6 +22,9 @@ export function ProductItem({
   console.log(barcode);
 
   useEffect(() => {
+    console.log(bar_code);
+    console.log(barcode);
+
     if (bar_code === barcode) {
       handleCheck();
     }

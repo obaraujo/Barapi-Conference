@@ -13,7 +13,9 @@ export function ScannerProvider({ children }: { children: ReactNode }) {
   const [activeScanner, setActiveScanner] = useState(false);
   return (
     <ContextScanner.Provider value={{ barcode, setActiveScanner }}>
-      {activeScanner && <BarcodeScanner onRead={setBarcode} />}
+      {activeScanner && (
+        <BarcodeScanner onRead={setBarcode} setActive={setActiveScanner} />
+      )}
       {children}
     </ContextScanner.Provider>
   );

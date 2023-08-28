@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 
 interface BarcodeScannerProps {
   onRead: (value: string) => void;
+  setActive: (value: boolean) => void;
 }
 
-export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
+export function BarcodeScanner({ onRead, setActive }: BarcodeScannerProps) {
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [cameraActiveId, setCameraActiveId] = useState<string>("");
   const [isScanning, setIsScanning] = useState<boolean>(false);
@@ -48,7 +49,8 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
         },
         (data) => {
           onRead(data);
-          scanRef.current && scanRef.current.stop();
+          scanRef.current &&
+            scanRef.current.stop().then((ignore) => setActive(false));
         },
         (e) => setIsScanning(!!scanRef.current?.isScanning)
       );
