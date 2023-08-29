@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { Popup } from "@/components/Popup";
 
 export default function Page() {
-  const [decodedResults, setDecodedResult] = useState("");
-
   return (
     <>
-      <h1 className="text-sm">{decodedResults}</h1>
+      <main className="bg-orange-barapi">
+        <div className="h-screen"></div>
+        <div className="h-screen"></div>
+      </main>
+      <Popup>,</Popup>
     </>
   );
 }

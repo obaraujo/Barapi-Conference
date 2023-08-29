@@ -1,3 +1,4 @@
+import { Popup } from "@/components/Popup";
 import { PopupConfirmProduct } from "@/components/PopupConfirmProduct";
 import { BarcodeScanner } from "@/components/Scanner";
 import { ReactNode, createContext, useContext, useState } from "react";
@@ -19,7 +20,14 @@ export function ScannerProvider({ children }: { children: ReactNode }) {
     <ContextScanner.Provider value={{ setProductFetched, productFetched }}>
       <BarcodeScanner onRead={setBarcode} />
       {productFetched && productFetched.bar_code === barcode && (
-        <PopupConfirmProduct product={productFetched} />
+        <Popup>
+          <PopupConfirmProduct product={productFetched} />
+        </Popup>
+      )}
+      {productFetched && (
+        <Popup>
+          <PopupConfirmProduct product={productFetched} />
+        </Popup>
       )}
       {children}
     </ContextScanner.Provider>
