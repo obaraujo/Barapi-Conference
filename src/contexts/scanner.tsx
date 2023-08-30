@@ -2,7 +2,13 @@ import { Popup } from "@/components/Popup";
 import { PopupConfirmProduct } from "@/components/PopupConfirmProduct";
 import { PopupIncorrectProduct } from "@/components/PopupIncorrectProduct";
 import { BarcodeScanner } from "@/components/Scanner";
-import { ReactNode, createContext, useContext, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { OrderProductProps } from "./order";
 
 interface ScannerProps {
@@ -23,6 +29,10 @@ export function ScannerProvider({ children }: { children: ReactNode }) {
   function handleClose() {
     setProductFetched(null);
   }
+
+  useEffect(() => {
+    if (productFetched && productFetched.bar_code !== barcode) setBarcode("");
+  }, [productFetched]);
 
   return (
     <ContextScanner.Provider
