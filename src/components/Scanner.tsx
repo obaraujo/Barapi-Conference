@@ -31,13 +31,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
 
   useEffect(() => {
     if (activeScanner) {
-      startScan().catch((e) => {
-        alert(
-          "Houve um erro ao abrir a câmera, por favor recarregue a página! 😉"
-        );
-        console.error(e);
-        setActiveScanner(false);
-      });
+      startScan();
       console.log("Start scanner");
     } else if (scanRef.current?.isScanning) {
       scanRef.current.stop();
@@ -54,23 +48,31 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
         setIsScanning(false);
       }
 
-      scanRef.current.start(
-        { deviceId: cameraActiveId },
-        {
-          fps: 2,
-          aspectRatio: window.innerHeight / window.innerWidth,
-          // qrbox: { height: 150, width: 350 },
-        },
-        (data) => {
-          onRead(data);
-          scanRef.current &&
-            scanRef.current.stop().then((ignore) => {
-              setIsScanning(false);
-              setActiveScanner(false);
-            });
-        },
-        (e) => setIsScanning(!!scanRef.current?.isScanning)
-      );
+      scanRef.current
+        .start(
+          { deviceId: cameraActiveId },
+          {
+            fps: 2,
+            aspectRatio: window.innerHeight / window.innerWidth,
+            // qrbox: { height: 150, width: 350 },
+          },
+          (data) => {
+            onRead(data);
+            scanRef.current &&
+              scanRef.current.stop().then((ignore) => {
+                setIsScanning(false);
+                setActiveScanner(false);
+              });
+          },
+          (e) => setIsScanning(!!scanRef.current?.isScanning)
+        )
+        .catch((e) => {
+          alert(
+            "Houve um erro ao abrir a câmera, por favor recarregue a página! 😉"
+          );
+          console.error(e);
+          setActiveScanner(false);
+        });
     }
   }
 
