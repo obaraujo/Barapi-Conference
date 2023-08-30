@@ -14,15 +14,15 @@ import { OrderProductProps } from "./order";
 interface ScannerProps {
   productFetched: OrderProductProps;
   setProductFetched: (product: OrderProductProps) => void;
-  activeScanner: boolean;
-  setActiveScanner: (state: boolean) => void;
+  activeScanner: boolean | "retry";
+  setActiveScanner: (state: boolean | "retry") => void;
 }
 
 const ContextScanner = createContext<ScannerProps>({} as ScannerProps);
 
 export function ScannerProvider({ children }: { children: ReactNode }) {
   const [barcode, setBarcode] = useState("");
-  const [activeScanner, setActiveScanner] = useState(false);
+  const [activeScanner, setActiveScanner] = useState<boolean | "retry">(false);
   const [productFetched, setProductFetched] =
     useState<OrderProductProps | null>(null);
 

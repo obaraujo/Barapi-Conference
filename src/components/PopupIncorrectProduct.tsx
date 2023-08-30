@@ -10,7 +10,7 @@ export function PopupIncorrectProduct({}: {}) {
       </header>
       <main>
         <button
-          onClick={() => setActiveScanner(true)}
+          onClick={() => setActiveScanner("retry")}
           className="mt-5 w-full flex  items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
         >
           Tentar novamente

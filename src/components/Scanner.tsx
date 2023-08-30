@@ -1,8 +1,10 @@
-import { Cross2Icon, MixerHorizontalIcon } from "@radix-ui/react-icons";
 import * as Popover from "@radix-ui/react-popover";
 import { useScanner } from "contexts/scanner";
 import { CameraDevice, Html5Qrcode } from "html5-qrcode";
 import { useEffect, useRef, useState } from "react";
+import { FaXmark } from "react-icons/fa6";
+import { GiPush } from "react-icons/gi";
+import { MdSettings } from "react-icons/md";
 
 interface BarcodeScannerProps {
   onRead: (value: string) => void;
@@ -12,7 +14,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [cameraActiveId, setCameraActiveId] = useState<string>("");
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const { setActiveScanner, activeScanner } = useScanner();
+  const { setActiveScanner, activeScanner, productFetched } = useScanner();
   const scanRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
@@ -32,13 +34,10 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   useEffect(() => {
     if (activeScanner) {
       startScan();
-      console.log("Start scanner");
     } else if (scanRef.current?.isScanning) {
       scanRef.current.stop();
     }
   }, [cameraActiveId, scanRef.current, activeScanner]);
-
-  console.log(activeScanner);
 
   async function startScan() {
     if (cameraActiveId && scanRef.current) {
@@ -54,7 +53,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
           {
             fps: 2,
             aspectRatio: window.innerHeight / window.innerWidth,
-            // qrbox: { height: 150, width: 350 },
+            qrbox: { height: 150, width: 325 },
           },
           (data) => {
             onRead(data);
@@ -82,18 +81,18 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
       data-active={isScanning && activeScanner}
     >
       <button
-        className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
+        className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044]  focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
         onClick={() => {
           setActiveScanner(false);
         }}
       >
-        <Cross2Icon accentHeight={24} />
+        <FaXmark />
       </button>
       <div id="scanner_barapi"></div>
       <Popover.Root>
         <Popover.Trigger asChild>
-          <button className="absolute top-4 left-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none">
-            <MixerHorizontalIcon />
+          <button className="absolute top-4 left-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none">
+            <MdSettings size={24} />
           </button>
         </Popover.Trigger>
         <Popover.Portal className="">
@@ -170,15 +169,32 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
               )}
             </div>
             <Popover.Close
-              className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
+              className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
               aria-label="Close"
             >
-              <Cross2Icon />
+              <FaXmark size={24} />
             </Popover.Close>
             <Popover.Arrow className="fill-white" />
           </Popover.Content>
         </Popover.Portal>
       </Popover.Root>
+
+      {activeScanner === "retry" && productFetched && (
+        <button
+          onClick={() => {
+            onRead(productFetched.bar_code);
+            scanRef.current &&
+              scanRef.current.stop().then((ignore) => {
+                setIsScanning(false);
+                setActiveScanner(false);
+              });
+          }}
+          className="mt-5 w-full flex  items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
+        >
+          <GiPush />
+          Forçar confirmação
+        </button>
+      )}
     </div>
   );
 }
