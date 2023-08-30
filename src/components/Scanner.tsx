@@ -12,7 +12,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [cameraActiveId, setCameraActiveId] = useState<string>("");
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const { setProductFetched, productFetched } = useScanner();
+  const { setActiveScanner, activeScanner } = useScanner();
   const scanRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
@@ -30,12 +30,12 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   }, []);
 
   useEffect(() => {
-    if (!!productFetched) {
+    if (activeScanner) {
       startScan();
     } else if (scanRef.current?.isScanning) {
       scanRef.current.stop();
     }
-  }, [cameraActiveId, scanRef.current, productFetched]);
+  }, [cameraActiveId, scanRef.current, activeScanner]);
 
   async function startScan() {
     if (cameraActiveId && scanRef.current) {
@@ -67,14 +67,12 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   return (
     <div
       className="fixed inset-0 z-50 data-[active=false]:invisible"
-      data-active={
-        isScanning && scanRef.current?.isScanning && !!productFetched
-      }
+      data-active={isScanning && activeScanner}
     >
       <button
         className="absolute top-4 right-4 z-50 rounded-full w-10 h-10 inline-flex items-center justify-center text-orange-barapi bg-white shadow-[0_2px_10px] shadow-[#00000044] hover:text-white focus:shadow-[0_0_0_2px] focus:shadow-black cursor-default outline-none"
         onClick={() => {
-          setProductFetched(null);
+          setActiveScanner(false);
         }}
       >
         <Cross2Icon accentHeight={24} />

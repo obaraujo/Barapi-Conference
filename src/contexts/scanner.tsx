@@ -1,5 +1,6 @@
 import { Popup } from "@/components/Popup";
 import { PopupConfirmProduct } from "@/components/PopupConfirmProduct";
+import { PopupIncorrectProduct } from "@/components/PopupIncorrectProduct";
 import { BarcodeScanner } from "@/components/Scanner";
 import { ReactNode, createContext, useContext, useState } from "react";
 import { OrderProductProps } from "./order";
@@ -7,27 +8,44 @@ import { OrderProductProps } from "./order";
 interface ScannerProps {
   productFetched: OrderProductProps;
   setProductFetched: (product: OrderProductProps) => void;
+  activeScanner: boolean;
+  setActiveScanner: (state: boolean) => void;
 }
 
 const ContextScanner = createContext<ScannerProps>({} as ScannerProps);
 
 export function ScannerProvider({ children }: { children: ReactNode }) {
   const [barcode, setBarcode] = useState("");
+  const [activeScanner, setActiveScanner] = useState(false);
   const [productFetched, setProductFetched] =
     useState<OrderProductProps | null>(null);
 
+  function handleClose() {
+    setProductFetched(null);
+  }
+
   return (
-    <ContextScanner.Provider value={{ setProductFetched, productFetched }}>
+    <ContextScanner.Provider
+      value={{
+        setProductFetched,
+        productFetched,
+        activeScanner,
+        setActiveScanner,
+      }}
+    >
       <BarcodeScanner onRead={setBarcode} />
-      {productFetched && productFetched.bar_code === barcode && (
-        <Popup>
-          <PopupConfirmProduct product={productFetched} />
-        </Popup>
-      )}
-      {productFetched && (
-        <Popup>
-          <PopupConfirmProduct product={productFetched} />
-        </Popup>
+      {productFetched && barcode && (
+        <>
+          {productFetched.bar_code === barcode ? (
+            <Popup onClose={handleClose}>
+              <PopupConfirmProduct product={productFetched} />
+            </Popup>
+          ) : (
+            <Popup onClose={handleClose}>
+              <PopupIncorrectProduct />
+            </Popup>
+          )}
+        </>
       )}
       {children}
     </ContextScanner.Provider>

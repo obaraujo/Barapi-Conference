@@ -14,7 +14,7 @@ export function ProductItem(props: OrderProductProps & { scan?: boolean }) {
     scan = true,
     conference: { status },
   } = props;
-  const { setProductFetched } = useScanner();
+  const { setProductFetched, setActiveScanner } = useScanner();
 
   return (
     <div
@@ -40,7 +40,10 @@ export function ProductItem(props: OrderProductProps & { scan?: boolean }) {
           {status !== "complete" && scan && (
             <div className="flex gap-1">
               <button
-                onClick={() => setProductFetched(props)}
+                onClick={() => {
+                  setProductFetched(props);
+                  setActiveScanner(true);
+                }}
                 className="flex gap-1 items-center bg-orange-barapi rounded-lg text-white font-bold px-6 h-11 disabled:bg-gray-400"
               >
                 <BiScan />

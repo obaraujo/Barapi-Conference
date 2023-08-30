@@ -1,9 +1,16 @@
 "use client";
+
 import * as Portal from "@radix-ui/react-portal";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 
-export function Popup({ children }: { children: ReactNode }) {
+export function Popup({
+  children,
+  onClose,
+}: {
+  children: ReactNode;
+  onClose: () => void;
+}) {
   const [positionY, setPositionY] = useState(0);
   const popup = useRef(null);
 
@@ -14,6 +21,7 @@ export function Popup({ children }: { children: ReactNode }) {
 
     if (heightWindow <= heightPopup / 2 + positionYPopup) {
       setPositionY(heightWindow);
+      onClose();
     } else {
       setPositionY(heightWindow - heightPopup);
     }
@@ -28,10 +36,14 @@ export function Popup({ children }: { children: ReactNode }) {
 
   return (
     <Portal.Root>
+      <div
+        onClick={() => onClose()}
+        className="bg-black/25 fixed inset-0 bottom-0 right-0"
+      ></div>
       <Draggable
         axis="y"
         handle="#handle"
-        defaultPosition={{ y: window.innerHeight, x: 0 }}
+        defaultPosition={{ y: 1000, x: 0 }}
         position={positionY ? { y: positionY, x: 0 } : undefined}
         grid={[0, 1]}
         scale={1}
@@ -44,7 +56,7 @@ export function Popup({ children }: { children: ReactNode }) {
         >
           <div
             id="handle"
-            className="bg-gray-500 w-20 h-3 mx-auto rounded-full mb-4 hover:bg-gray-300 transition-all cursor-pointer"
+            className="bg-gray-400 w-20 h-3 mx-auto rounded-full mb-4 hover:bg-gray-300 transition-all cursor-pointer"
           ></div>
           {children}
         </main>
