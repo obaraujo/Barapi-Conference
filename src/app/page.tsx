@@ -1,7 +1,5 @@
 "use client";
 
-import { Popup } from "@/components/Popup";
-
 export default function Page() {
   return (
     <>
@@ -9,7 +7,6 @@ export default function Page() {
         <div className="h-screen"></div>
         <div className="h-screen"></div>
       </main>
-      <Popup>,</Popup>
     </>
   );
 }
