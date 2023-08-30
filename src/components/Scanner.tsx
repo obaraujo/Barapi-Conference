@@ -49,7 +49,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
         { deviceId: cameraActiveId },
         {
           fps: 2,
-          // aspectRatio: window.innerHeight / window.innerWidth,
+          aspectRatio: window.innerHeight / window.innerWidth,
           // qrbox: { height: 150, width: 350 },
         },
         (data) => {
