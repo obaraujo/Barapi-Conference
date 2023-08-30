@@ -43,7 +43,10 @@ export function ScannerProvider({ children }: { children: ReactNode }) {
         setActiveScanner,
       }}
     >
-      <BarcodeScanner onRead={setBarcode} />
+      <BarcodeScanner
+        onRead={setBarcode}
+        expectedValue={productFetched?.bar_code}
+      />
       {productFetched && barcode && !activeScanner && (
         <>
           {productFetched.bar_code === barcode ? (

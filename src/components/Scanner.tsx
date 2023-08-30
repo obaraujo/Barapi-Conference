@@ -8,13 +8,17 @@ import { MdSettings } from "react-icons/md";
 
 interface BarcodeScannerProps {
   onRead: (value: string) => void;
+  expectedValue?: string;
 }
 
-export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
+export function BarcodeScanner({
+  onRead,
+  expectedValue = "",
+}: BarcodeScannerProps) {
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [cameraActiveId, setCameraActiveId] = useState<string>("");
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const { setActiveScanner, activeScanner, productFetched } = useScanner();
+  const { setActiveScanner, activeScanner } = useScanner();
   const scanRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
@@ -179,17 +183,17 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
         </Popover.Portal>
       </Popover.Root>
 
-      {activeScanner === "retry" && productFetched && (
+      {activeScanner === "retry" && (
         <button
           onClick={() => {
-            onRead(productFetched.bar_code);
+            onRead(expectedValue);
             scanRef.current &&
               scanRef.current.stop().then((ignore) => {
                 setIsScanning(false);
                 setActiveScanner(false);
               });
           }}
-          className="absolute bottom-4 right-4 left-4 z-50 w-full flex items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
+          className="absolute bottom-4 right-4 left-4 z-50 flex items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
         >
           <GiPush />
           Forçar confirmação
