@@ -44,7 +44,7 @@ export function ScannerProvider({ children }: { children: ReactNode }) {
       }}
     >
       <BarcodeScanner onRead={setBarcode} />
-      {productFetched && barcode && (
+      {productFetched && barcode && !activeScanner && (
         <>
           {productFetched.bar_code === barcode ? (
             <Popup onClose={handleClose}>

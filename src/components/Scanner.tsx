@@ -32,10 +32,13 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   useEffect(() => {
     if (activeScanner) {
       startScan();
+      console.log("Start scanner");
     } else if (scanRef.current?.isScanning) {
       scanRef.current.stop();
     }
   }, [cameraActiveId, scanRef.current, activeScanner]);
+
+  console.log(activeScanner);
 
   async function startScan() {
     if (cameraActiveId && scanRef.current) {

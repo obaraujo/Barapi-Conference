@@ -38,7 +38,7 @@ export function Popup({
     <Portal.Root>
       <div
         onClick={() => onClose()}
-        className="bg-black/25 fixed inset-0 bottom-0 right-0"
+        className="bg-black/25 fixed inset-0 bottom-0 right-0 z-50"
       ></div>
       <Draggable
         axis="y"
@@ -52,7 +52,7 @@ export function Popup({
         <main
           ref={popup}
           style={{ transition: "all 0.25s" }}
-          className="fixed p-4 top-0 left-0 right-0  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi"
+          className="fixed p-4 top-0 left-0 right-0 z-50  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi"
         >
           <div
             id="handle"
