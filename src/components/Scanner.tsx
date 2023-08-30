@@ -189,7 +189,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
                 setActiveScanner(false);
               });
           }}
-          className="mt-5 w-full flex  items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
+          className="absolute bottom-4 right-4 left-4 z-50 w-full flex items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
         >
           <GiPush />
           Forçar confirmação
