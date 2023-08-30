@@ -1,3 +1,5 @@
+"use client";
+
 import * as Popover from "@radix-ui/react-popover";
 import { useScanner } from "contexts/scanner";
 import { CameraDevice, Html5Qrcode } from "html5-qrcode";

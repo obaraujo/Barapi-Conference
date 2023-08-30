@@ -1,3 +1,5 @@
+"use client";
+
 import { Popup } from "@/components/Popup";
 import { PopupConfirmProduct } from "@/components/PopupConfirmProduct";
 import { PopupIncorrectProduct } from "@/components/PopupIncorrectProduct";

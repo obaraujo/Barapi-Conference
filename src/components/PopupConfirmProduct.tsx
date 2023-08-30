@@ -1,3 +1,5 @@
+"use client";
+
 import { OrderProductProps, useOrder } from "contexts/order";
 import { useScanner } from "contexts/scanner";
 import { useEffect, useState } from "react";

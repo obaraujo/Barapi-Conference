@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, createContext, useContext, useState } from "react";
 import { useQuery } from "react-query";
 import { apiBarapiV2 } from "services/api";
