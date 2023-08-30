@@ -31,7 +31,13 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
 
   useEffect(() => {
     if (activeScanner) {
-      startScan();
+      startScan().catch((e) => {
+        alert(
+          "Houve um erro ao abrir a câmera, por favor recarregue a página! 😉"
+        );
+        console.error(e);
+        setActiveScanner(false);
+      });
       console.log("Start scanner");
     } else if (scanRef.current?.isScanning) {
       scanRef.current.stop();

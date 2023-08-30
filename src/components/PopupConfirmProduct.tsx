@@ -14,13 +14,12 @@ export function PopupConfirmProduct({
   product: OrderProductProps;
 }) {
   const [quantity, setQuantity] = useState(0);
-  const { setProductFetched, setActiveScanner } = useScanner();
+  const { setProductFetched } = useScanner();
 
   const { refetch } = useOrder();
 
   async function handleVerification(state: "complete" | "revision") {
     setProductFetched(null);
-    setActiveScanner(false);
     const form = new FormData();
     form.append("order_item_id", product.id.toString());
     form.append("status", state);
