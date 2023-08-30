@@ -187,11 +187,12 @@ export function BarcodeScanner({
         <button
           onClick={() => {
             onRead(expectedValue);
-            scanRef.current &&
+            if (scanRef.current && scanRef.current.isScanning) {
               scanRef.current.stop().then((ignore) => {
                 setIsScanning(false);
                 setActiveScanner(false);
               });
+            }
           }}
           className="absolute bottom-4 right-4 left-4 z-50 flex items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
         >
