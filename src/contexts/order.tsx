@@ -29,11 +29,19 @@ export interface OrderProductProps {
 }
 
 interface orderDataProps {
+  customer: {
+    name: string;
+    phone: string;
+  };
   products: OrderProductProps[];
 }
 
 interface OrderContextProps {
   orderData: {
+    customer: {
+      name: string;
+      phone: string;
+    };
     products: {
       pending: OrderProductProps[];
       revision: OrderProductProps[];
@@ -76,6 +84,7 @@ export function OrderContextProvider({
       );
 
       const newData = {
+        ...data,
         products: {
           pending: [],
           revision: [],

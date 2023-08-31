@@ -8,6 +8,8 @@ import { FaMinus, FaPlus } from "react-icons/fa6";
 import { ImCheckmark } from "react-icons/im";
 import { PiClockCountdownBold } from "react-icons/pi";
 import { apiBarapiV2 } from "services/api";
+import { Popup } from "./Popup";
+import { PopupChat } from "./PopupChat";
 import { ProductItem } from "./ProductItem";
 
 export function PopupConfirmProduct({
@@ -17,6 +19,7 @@ export function PopupConfirmProduct({
 }) {
   const [quantity, setQuantity] = useState(0);
   const { setProductFetched } = useScanner();
+  const [openChat, setOpenChat] = useState(false);
 
   const { refetch } = useOrder();
 
@@ -77,13 +80,18 @@ export function PopupConfirmProduct({
               </button>
             </fieldset>
             <div className="flex justify-between gap-4">
+              {product.conference.status !== "revision" && (
+                <button
+                  onClick={() => handleVerification("revision")}
+                  className="flex  items-center justify-center gap-1 bg-white flex-1 border-orange-barapi border rounded-lg px-4 py-3 text-orange-barapi font-semibold"
+                >
+                  <PiClockCountdownBold /> Em revisão
+                </button>
+              )}
               <button
-                onClick={() => handleVerification("revision")}
+                onClick={() => setOpenChat(true)}
                 className="flex  items-center justify-center gap-1 bg-white flex-1 border-orange-barapi border rounded-lg px-4 py-3 text-orange-barapi font-semibold"
               >
-                <PiClockCountdownBold /> Em revisão
-              </button>
-              <button className="flex  items-center justify-center gap-1 bg-white flex-1 border-orange-barapi border rounded-lg px-4 py-3 text-orange-barapi font-semibold">
                 <BsChatTextFill /> Chat
               </button>
             </div>
@@ -96,6 +104,14 @@ export function PopupConfirmProduct({
             </button>
           </form>
         </main>
+        {openChat && (
+          <Popup onClose={() => setOpenChat(false)}>
+            <PopupChat
+              quantityReal={quantity}
+              onSendMessage={() => setOpenChat(false)}
+            />
+          </Popup>
+        )}
       </>
     )
   );
