@@ -27,14 +27,14 @@ export function ProductItem(props: OrderProductProps & { scan?: boolean }) {
           <div className="flex flex-col">
             {conference?.quantity &&
             parseFloat(conference.quantity) !== quantity ? (
-              <>
-                <span className="font-bold text-4xl text-orange-barapi">
+              <div className="flex">
+                <span className="font-bold text-4xl text-orange-barapi line-through">
                   {conference.quantity}x
                 </span>
                 <span className="font-bold text-xl text-orange-barapi/50">
                   {quantity}x
                 </span>
-              </>
+              </div>
             ) : (
               <span className="font-bold text-4xl text-orange-barapi">
                 {quantity}x
