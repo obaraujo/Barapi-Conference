@@ -16,15 +16,16 @@ import { OrderProductProps } from "./order";
 interface ScannerProps {
   productFetched: OrderProductProps;
   setProductFetched: (product: OrderProductProps) => void;
-  activeScanner: boolean | "retry";
-  setActiveScanner: (state: boolean | "retry") => void;
+  activeScanner: boolean;
+  setActiveScanner: (state: boolean) => void;
+  setBarcode: (barcode: string) => void;
 }
 
 const ContextScanner = createContext<ScannerProps>({} as ScannerProps);
 
 export function ScannerProvider({ children }: { children: ReactNode }) {
   const [barcode, setBarcode] = useState("");
-  const [activeScanner, setActiveScanner] = useState<boolean | "retry">(false);
+  const [activeScanner, setActiveScanner] = useState<boolean>(false);
   const [productFetched, setProductFetched] =
     useState<OrderProductProps | null>(null);
 
@@ -43,12 +44,10 @@ export function ScannerProvider({ children }: { children: ReactNode }) {
         productFetched,
         activeScanner,
         setActiveScanner,
+        setBarcode,
       }}
     >
-      <BarcodeScanner
-        onRead={setBarcode}
-        expectedValue={productFetched?.bar_code}
-      />
+      <BarcodeScanner onRead={setBarcode} />
       {productFetched && barcode && !activeScanner && (
         <>
           {productFetched.bar_code === barcode ? (

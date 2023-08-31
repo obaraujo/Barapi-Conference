@@ -5,18 +5,13 @@ import { useScanner } from "contexts/scanner";
 import { CameraDevice, Html5Qrcode } from "html5-qrcode";
 import { useEffect, useRef, useState } from "react";
 import { FaXmark } from "react-icons/fa6";
-import { GiPush } from "react-icons/gi";
 import { MdSettings } from "react-icons/md";
 
 interface BarcodeScannerProps {
   onRead: (value: string) => void;
-  expectedValue?: string;
 }
 
-export function BarcodeScanner({
-  onRead,
-  expectedValue = "",
-}: BarcodeScannerProps) {
+export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [cameraActiveId, setCameraActiveId] = useState<string>("");
   const [isScanning, setIsScanning] = useState<boolean>(false);
@@ -184,24 +179,6 @@ export function BarcodeScanner({
           </Popover.Content>
         </Popover.Portal>
       </Popover.Root>
-
-      {activeScanner === "retry" && (
-        <button
-          onClick={() => {
-            onRead(expectedValue);
-            if (scanRef.current && scanRef.current.isScanning) {
-              scanRef.current.stop().then((ignore) => {
-                setIsScanning(false);
-                setActiveScanner(false);
-              });
-            }
-          }}
-          className="absolute bottom-4 right-4 left-4 z-50 flex items-center justify-center gap-1 bg-orange-barapi text-white font-semibold rounded-lg px-4 py-3"
-        >
-          <GiPush />
-          Forçar confirmação
-        </button>
-      )}
     </div>
   );
 }
