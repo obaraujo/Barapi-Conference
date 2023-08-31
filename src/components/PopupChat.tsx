@@ -21,7 +21,7 @@ export function PopupChat({
     let message = "";
     if (type) {
       const messages = {
-        outOfStokeWithOthers: `O produto "{productName}" está em falta, temos a seguinte opções: `,
+        outOfStokeWithOthers: `O produto "{productName}" está em falta, temos as seguintes opções: `,
         outOfStokeWithoutOthers: `O produto "{productName}" está em falta. Infelizmente não temos outras opções.`,
         lowerQuantity: `Você pediu {quantity} "{productName}", porém infelizmente só temos {quantityReal}.`,
       };
