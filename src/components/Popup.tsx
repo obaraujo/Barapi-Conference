@@ -2,7 +2,7 @@
 
 import * as Portal from "@radix-ui/react-portal";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import Draggable from "react-draggable";
+import Draggable, { DraggableData } from "react-draggable";
 
 export function Popup({
   children,
@@ -12,19 +12,28 @@ export function Popup({
   onClose: () => void;
 }) {
   const [positionY, setPositionY] = useState(0);
+  const [positionBoundY, setPositionBoundY] = useState(0);
+  const [heightPopup, setHeightPopup] = useState(0);
   const popup = useRef(null);
 
-  function handleStop(e) {
-    const { clientY: positionYPopup } = e.changedTouches[0];
-    const heightPopup = popup.current.getBoundingClientRect().height;
+  function handleStop(e, data: DraggableData) {
+    document.body.style.overflowY = "auto";
     const heightWindow = window.innerHeight;
 
-    if (heightWindow <= heightPopup / 2 + positionYPopup) {
+    if (heightWindow <= heightPopup / 2 + data.y) {
       setPositionY(heightWindow);
       onClose();
+    } else if (data.y <= heightWindow - heightPopup) {
+      setHeightPopup(heightWindow);
+      setPositionBoundY(0);
+      setPositionY(1);
     } else {
       setPositionY(heightWindow - heightPopup);
     }
+  }
+
+  function handleStart() {
+    document.body.style.overflowY = "hidden";
   }
 
   useEffect(() => {
@@ -32,6 +41,8 @@ export function Popup({
     const heightWindow = window.innerHeight;
 
     setPositionY(heightWindow - heightPopup);
+    setPositionBoundY(heightWindow - heightPopup - 5);
+    setHeightPopup(heightPopup);
   }, [children]);
 
   return (
@@ -42,23 +53,27 @@ export function Popup({
       ></div>
       <Draggable
         axis="y"
-        handle="#handle"
+        handle=".handle"
         defaultPosition={{ y: 1000, x: 0 }}
         position={positionY ? { y: positionY, x: 0 } : undefined}
-        grid={[0, 1]}
+        grid={[1, 1]}
         scale={1}
         onStop={handleStop}
+        onStart={handleStart}
+        bounds={{ top: positionBoundY }}
       >
         <main
           ref={popup}
-          style={{ transition: "all 0.25s" }}
-          className="fixed p-4 top-0 left-0 right-0 z-50  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi"
+          style={{
+            transition: "all 0.25s",
+            height: heightPopup ? heightPopup : null,
+          }}
+          className={`fixed p-4 top-0 left-0 right-0 z-50  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi`}
         >
-          <div
-            id="handle"
-            className="bg-gray-400 w-20 h-3 mx-auto rounded-full mb-4 hover:bg-gray-300 transition-all cursor-pointer"
-          ></div>
-          {children}
+          <div className="handle">
+            <div className=" bg-gray-400 w-20 h-3 mx-auto rounded-full mb-4 hover:bg-gray-300 transition-all cursor-pointer"></div>
+            {children}
+          </div>
         </main>
       </Draggable>
     </Portal.Root>
