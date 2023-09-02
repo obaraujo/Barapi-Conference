@@ -70,10 +70,8 @@ export function Popup({
           }}
           className={`fixed p-4 top-0 left-0 right-0 z-50  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi`}
         >
-          <div className="handle">
-            <div className=" bg-gray-400 w-20 h-3 mx-auto rounded-full mb-4 hover:bg-gray-300 transition-all cursor-pointer"></div>
-            {children}
-          </div>
+          <div className="handle bg-gray-400 w-20 h-3 mx-auto rounded-full mb-4 hover:bg-gray-300 transition-all cursor-pointer"></div>
+          {children}
         </main>
       </Draggable>
     </Portal.Root>
