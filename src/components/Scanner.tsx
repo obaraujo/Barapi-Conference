@@ -78,7 +78,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 data-[active=false]:invisible"
+      className="fixed inset-0 z-[9999] data-[active=false]:invisible"
       data-active={isScanning && activeScanner}
     >
       <button

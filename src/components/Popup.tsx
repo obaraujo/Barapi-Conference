@@ -7,9 +7,11 @@ import Draggable, { DraggableData } from "react-draggable";
 export function Popup({
   children,
   onClose,
+  fullscreen = false,
 }: {
   children: ReactNode;
   onClose: () => void;
+  fullscreen?: boolean;
 }) {
   const [positionY, setPositionY] = useState(0);
   const [positionBoundY, setPositionBoundY] = useState(0);
@@ -22,7 +24,7 @@ export function Popup({
     if (heightWindow <= heightPopup / 2 + data.y) {
       setPositionY(heightWindow);
       onClose();
-    } else if (data.y <= heightWindow - heightPopup) {
+    } else if (data.y <= heightWindow - heightPopup && fullscreen) {
       popup.current.style.height = `${heightWindow}px`;
       setPositionBoundY(0);
       setPositionY(1);

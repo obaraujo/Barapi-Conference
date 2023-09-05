@@ -4,10 +4,10 @@ import { BsChatTextFill } from "react-icons/bs";
 import { TbSend } from "react-icons/tb";
 
 export function PopupChat({
-  quantityReal,
+  quantityReal = 0,
   onSendMessage,
 }: {
-  quantityReal: number;
+  quantityReal?: number;
   onSendMessage: () => void;
 }) {
   const { productFetched } = useScanner();
