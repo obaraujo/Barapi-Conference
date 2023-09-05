@@ -14,7 +14,7 @@ export function Popup({
   const [positionY, setPositionY] = useState(0);
   const [positionBoundY, setPositionBoundY] = useState(0);
   const [heightPopup, setHeightPopup] = useState(0);
-  const popup = useRef(null);
+  const popup = useRef<HTMLElement | null>(null);
 
   function handleStop(e, data: DraggableData) {
     const heightWindow = window.innerHeight;
@@ -23,11 +23,16 @@ export function Popup({
       setPositionY(heightWindow);
       onClose();
     } else if (data.y <= heightWindow - heightPopup) {
-      setHeightPopup(heightWindow);
+      popup.current.style.height = `${heightWindow}px`;
       setPositionBoundY(0);
       setPositionY(1);
-    } else {
+    } else if (data.y <= heightPopup) {
+      popup.current.style.height = `${heightPopup}px`;
       setPositionY(heightWindow - heightPopup);
+      setPositionBoundY(heightWindow - heightPopup - 5);
+    } else {
+      const calc = heightWindow - heightPopup;
+      setPositionY(heightWindow - heightPopup === 0 ? 1 : calc);
     }
   }
 
@@ -39,12 +44,13 @@ export function Popup({
 
     setPositionY(heightWindow - heightPopup);
     setPositionBoundY(heightWindow - heightPopup - 5);
-    setHeightPopup(heightPopup);
 
     return () => {
       document.body.style.overflowY = "auto";
     };
-  }, [popup.current, heightPopup, children]);
+  }, [popup.current, heightPopup]);
+
+  console.log(heightPopup);
 
   return (
     <Portal.Root>
@@ -67,14 +73,13 @@ export function Popup({
           onLoad={(e) => setHeightPopup(e.currentTarget.clientHeight)}
           style={{
             transition: "all 0.25s",
-            // height: heightPopup ? heightPopup : null,
           }}
           className={`fixed p-4 top-0 left-0 right-0 z-50  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi`}
         >
-          <div className="handle w-full h-8">
-            <div className="bg-gray-400 w-20 h-3 mx-auto rounded-full hover:bg-gray-300 transition-all cursor-pointer"></div>
+          <div className="handle w-full h-10 absolute inset-0 flex items-center justify-center">
+            <div className="bg-gray-400 w-20 h-3 rounded-full hover:bg-gray-300 transition-all cursor-pointer"></div>
           </div>
-          {children}
+          <div className="mt-8 relative">{children}</div>
         </main>
       </Draggable>
     </Portal.Root>
