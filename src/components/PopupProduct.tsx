@@ -1,10 +1,12 @@
 import { imageProps } from "@/types/images";
+import { useOrder } from "contexts/order";
 import { usePopupProduct } from "contexts/popupProduct";
 import { useScanner } from "contexts/scanner";
 import { getInfoQuantity } from "functions";
 import { useState } from "react";
 import { BiScan } from "react-icons/bi";
 import { BsChatTextFill } from "react-icons/bs";
+import { PiClockCountdownBold } from "react-icons/pi";
 import { useQuery } from "react-query";
 import { apiBarapiV2 } from "services/api";
 import { CardProductPrice } from "./CardProductPrice";
@@ -36,15 +38,13 @@ export function PopupProduct({ productId }: { productId: number }) {
   const { setProductId } = usePopupProduct();
   const [openChat, setOpenChat] = useState(false);
   const { setProductFetched, setActiveScanner } = useScanner();
+  const { refetch } = useOrder();
 
   function handleClose() {
     setProductId(0);
   }
-  const {
-    isError,
-    data: product,
-    refetch,
-  } = useQuery(
+
+  const { isError, data: product } = useQuery(
     `get_order_data_product_${productId}`,
     async () => {
       const { data } = await apiBarapiV2.get<ProductProps>(
@@ -55,6 +55,17 @@ export function PopupProduct({ productId }: { productId: number }) {
 
     { onError: (e) => console.log(e) }
   );
+
+  async function handleVerification(state: "complete" | "revision") {
+    setProductFetched(null);
+    handleClose();
+    const form = new FormData();
+    form.append("order_item_id", product.id.toString());
+    form.append("status", state);
+    form.append("quantity", product.quantity.toString());
+    await apiBarapiV2.post("conference/item", form);
+    refetch();
+  }
 
   return (
     <>
@@ -93,13 +104,23 @@ export function PopupProduct({ productId }: { productId: number }) {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => setOpenChat(true)}
-                className="flex gap-1 items-center border-orange-barapi border  rounded-lg flex-1 text-orange-barapi font-bold px-6 py-3 justify-center disabled:bg-gray-400"
-              >
-                <BsChatTextFill /> Chat
-              </button>
+            <div className="flex gap-2 mt-4 flex-col">
+              <div className="flex justify-between gap-2">
+                {product.conference.status !== "revision" && (
+                  <button
+                    onClick={() => handleVerification("revision")}
+                    className="flex  items-center justify-center gap-1 bg-white flex-1 border-orange-barapi border rounded-lg px-4 py-3 text-orange-barapi font-semibold"
+                  >
+                    <PiClockCountdownBold /> Em revisão
+                  </button>
+                )}
+                <button
+                  onClick={() => setOpenChat(true)}
+                  className="flex gap-1 items-center border-orange-barapi border  rounded-lg flex-1 text-orange-barapi font-bold px-6 py-3 justify-center disabled:bg-gray-400"
+                >
+                  <BsChatTextFill /> Chat
+                </button>
+              </div>
               {product.conference.status !== "complete" && (
                 <button
                   onClick={() => {
