@@ -34,6 +34,7 @@ export function Popup({
   useEffect(() => {
     document.body.style.overflowY = "hidden";
 
+    const heightPopup = popup.current.getBoundingClientRect().height;
     const heightWindow = window.innerHeight;
 
     setPositionY(heightWindow - heightPopup);
@@ -43,7 +44,7 @@ export function Popup({
     return () => {
       document.body.style.overflowY = "auto";
     };
-  }, [popup.current, heightPopup]);
+  }, [popup.current, heightPopup, children]);
 
   return (
     <Portal.Root>
