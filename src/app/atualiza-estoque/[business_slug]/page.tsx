@@ -104,7 +104,6 @@ export default function Page({
           Escanear
         </button>
       </div>
-      {isPending && "Carregando"}
       <div className="mt-4" ref={parentAnimation}>
         {products &&
           products.map((product) => {
