@@ -1,9 +1,11 @@
+import { useOrder } from "contexts/order";
 import { useScanner } from "contexts/scanner";
 import { GiPush } from "react-icons/gi";
 import { TbReload } from "react-icons/tb";
 
 export function PopupIncorrectProduct({}: {}) {
-  const { setActiveScanner, productFetched, setBarcode } = useScanner();
+  const { setActiveScanner } = useScanner();
+  const { productFetched, setBarcode } = useOrder();
 
   return (
     <>

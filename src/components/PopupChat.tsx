@@ -1,5 +1,4 @@
 import { useOrder } from "contexts/order";
-import { useScanner } from "contexts/scanner";
 import { BsChatTextFill } from "react-icons/bs";
 import { TbSend } from "react-icons/tb";
 
@@ -10,7 +9,7 @@ export function PopupChat({
   quantityReal?: number;
   onSendMessage: () => void;
 }) {
-  const { productFetched } = useScanner();
+  const { productFetched } = useOrder();
   const {
     orderData: { customer },
   } = useOrder();

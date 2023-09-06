@@ -1,8 +1,19 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useState } from "react";
+import { Popup } from "@/components/Popup";
+import { PopupConfirmProduct } from "@/components/PopupConfirmProduct";
+import { PopupIncorrectProduct } from "@/components/PopupIncorrectProduct";
+import { BarcodeScanner } from "@/components/Scanner";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useQuery } from "react-query";
 import { apiBarapiV2 } from "services/api";
+import { useScanner } from "./scanner";
 
 export interface OrderProductProps {
   id: number;
@@ -37,6 +48,9 @@ interface orderDataProps {
 }
 
 interface OrderContextProps {
+  productFetched: OrderProductProps;
+  setProductFetched: (product: OrderProductProps) => void;
+  setBarcode: (barcode: string) => void;
   orderData: {
     customer: {
       name: string;
@@ -68,6 +82,19 @@ export function OrderContextProvider({
   children: ReactNode;
   orderId: number;
 }) {
+  const [barcode, setBarcode] = useState("");
+  const [productFetched, setProductFetched] =
+    useState<OrderProductProps | null>(null);
+  const { activeScanner } = useScanner();
+
+  function handleClose() {
+    setProductFetched(null);
+  }
+
+  useEffect(() => {
+    if (productFetched && productFetched.bar_code !== barcode) setBarcode("");
+  }, [productFetched]);
+
   const [quantityItems, setQuantityItems] = useState<
     OrderContextProps["quantityItems"]
   >({ pending: 0, revision: 0, complete: 0 });
@@ -118,12 +145,36 @@ export function OrderContextProvider({
 
     { onError: (e) => console.log(e), refetchInterval: 3000 }
   );
+
   if (isError) {
     console.log("deu");
   }
 
   return (
-    <OrderContext.Provider value={{ orderData, quantityItems, refetch }}>
+    <OrderContext.Provider
+      value={{
+        orderData,
+        quantityItems,
+        refetch,
+        productFetched,
+        setProductFetched,
+        setBarcode,
+      }}
+    >
+      <BarcodeScanner onRead={setBarcode} />
+      {productFetched && barcode && !activeScanner && (
+        <>
+          {productFetched.bar_code === barcode ? (
+            <Popup onClose={handleClose}>
+              <PopupConfirmProduct product={productFetched} />
+            </Popup>
+          ) : (
+            <Popup onClose={handleClose}>
+              <PopupIncorrectProduct />
+            </Popup>
+          )}
+        </>
+      )}
       {children}
     </OrderContext.Provider>
   );

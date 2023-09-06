@@ -1,7 +1,6 @@
 "use client";
 
 import { OrderProductProps, useOrder } from "contexts/order";
-import { useScanner } from "contexts/scanner";
 import { useEffect, useState } from "react";
 import { BsChatTextFill } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa6";
@@ -18,7 +17,7 @@ export function PopupConfirmProduct({
   product: OrderProductProps;
 }) {
   const [quantity, setQuantity] = useState(0);
-  const { setProductFetched } = useScanner();
+  const { setProductFetched } = useOrder();
   const [openChat, setOpenChat] = useState(false);
 
   const { refetch } = useOrder();

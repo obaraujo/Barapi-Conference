@@ -37,7 +37,8 @@ interface ProductProps {
 export function PopupProduct({ productId }: { productId: number }) {
   const { setProductId } = usePopupProduct();
   const [openChat, setOpenChat] = useState(false);
-  const { setProductFetched, setActiveScanner } = useScanner();
+  const { setActiveScanner } = useScanner();
+  const { setProductFetched } = useOrder();
   const { refetch } = useOrder();
 
   function handleClose() {

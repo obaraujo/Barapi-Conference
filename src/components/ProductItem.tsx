@@ -1,13 +1,15 @@
 import { Image } from "@/components/Image";
 import { formatCurrencyBRL } from "barapi";
-import { OrderProductProps } from "contexts/order";
+import { OrderProductProps, useOrder } from "contexts/order";
 import { usePopupProduct } from "contexts/popupProduct";
 import { useScanner } from "contexts/scanner";
 import { BiScan } from "react-icons/bi";
 
 export function ProductItem(props: OrderProductProps & { scan?: boolean }) {
   const { id, image, quantity, name, price, scan = true, conference } = props;
-  const { setProductFetched, setActiveScanner } = useScanner();
+  const { setActiveScanner } = useScanner();
+  const { setProductFetched } = useOrder();
+
   const { setProductId } = usePopupProduct();
   return (
     <div

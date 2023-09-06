@@ -20,18 +20,18 @@ export default function ConferenceLayout({
 }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <OrderContextProvider orderId={order_id}>
-        <header>
-          <Image src="/logo.svg" alt="" width={124} height={15} />
-          <h1 className="font-bold text-lg mt-4">Compra #{order_id}</h1>
-        </header>
-        <ScannerProvider>
+      <ScannerProvider>
+        <OrderContextProvider orderId={order_id}>
+          <header>
+            <Image src="/logo.svg" alt="" width={124} height={15} />
+            <h1 className="font-bold text-lg mt-4">Compra #{order_id}</h1>
+          </header>
           <PopupProductProvider>{children}</PopupProductProvider>
-        </ScannerProvider>
-        <footer className="mt-20">
-          <Navigation prefix={order_id.toString()} />
-        </footer>
-      </OrderContextProvider>
+          <footer className="mt-20">
+            <Navigation prefix={order_id.toString()} />
+          </footer>
+        </OrderContextProvider>
+      </ScannerProvider>
     </QueryClientProvider>
   );
 }
