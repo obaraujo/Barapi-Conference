@@ -85,7 +85,7 @@ export default function Page({
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.currentTarget.value)}
+          onChange={(e) => setSearch(e.currentTarget.value.toLowerCase())}
           placeholder="Procure por nome ou código de barras"
           className="rounded-xl border border-orange-barapi py-2 px-3 text-base w-full h-14"
         />
