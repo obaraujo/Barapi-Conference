@@ -38,39 +38,35 @@ export function PopupProductEdit({
   }
 
   return (
-    product && (
-      <>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <Input
-            label="Nome"
-            register={register}
-            value={product.name.toString()}
-            name="name"
-            type="text"
-          />
-          <Input
-            label="Estoque"
-            register={register}
-            value={product.stock.toString()}
-            name="stock"
-            type="number"
-          />
-          <Input
-            label="Preço"
-            register={register}
-            value={product.price.toString()}
-            name="price"
-            type="number"
-          />
-          <button
-            disabled={disabled}
-            className="flex gap-1 items-center w-full bg-orange-barapi rounded-lg flex-1 text-white font-bold px-6 py-3 justify-center disabled:bg-gray-400"
-            type="submit"
-          >
-            Salvar
-          </button>
-        </form>
-      </>
-    )
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <Input
+        label="Nome"
+        register={register}
+        value={product.name.toString()}
+        name="name"
+        type="text"
+      />
+      <Input
+        label="Estoque"
+        register={register}
+        value={product.stock.toString()}
+        name="stock"
+        type="number"
+      />
+      <Input
+        label="Preço"
+        register={register}
+        value={product.price.toString()}
+        name="price"
+        type="number"
+      />
+      <button
+        disabled={disabled}
+        className="flex gap-1 items-center w-full bg-orange-barapi rounded-lg flex-1 text-white font-bold px-6 py-3 justify-center disabled:bg-gray-400"
+        type="submit"
+      >
+        Salvar
+      </button>
+    </form>
   );
 }

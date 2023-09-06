@@ -110,14 +110,14 @@ export default function Page({
             const dataAtual = new Date();
             return (
               <div
-                className="grid grid-cols-[1fr_4rem] mt-4 border-b border-black/40 pb-2"
+                className="grid grid-cols-[1fr_3rem] mt-4 border-b border-black/40 pb-2"
                 key={product.id}
               >
                 <div className="flex flex-col">
                   <h3 className="font-bold text-base text-black/80 line-clamp-1">
                     {product.name}
                   </h3>
-                  <div className="grid grid-cols-[1rem_7rem_4rem_4rem_3rem] justify-center gap-2">
+                  <div className="grid grid-cols-[1rem_1fr_3rem_4rem_3rem] justify-center gap-2">
                     <Popover.Root>
                       <Popover.Trigger asChild>
                         <button

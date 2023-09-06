@@ -52,8 +52,6 @@ export function Popup({
     };
   }, [popup.current, heightPopup]);
 
-  console.log(heightPopup);
-
   return (
     <Portal.Root>
       <div
