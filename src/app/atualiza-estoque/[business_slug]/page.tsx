@@ -4,12 +4,14 @@ import { Popup } from "@/components/Popup";
 import { PopupProductEdit } from "@/components/PopupProductEdit";
 import { BarcodeScanner } from "@/components/Scanner";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import * as Popover from "@radix-ui/react-popover";
 import { formatCurrencyBRL } from "barapi";
 import "barapi/dist/tailwind.css";
 import { useScanner } from "contexts/scanner";
+import { formatDate } from "functions";
 import { useEffect, useState, useTransition } from "react";
 import { BiScan } from "react-icons/bi";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaInfoCircle } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { apiBarapiV2 } from "services/api";
 
@@ -22,7 +24,8 @@ export interface propsProductEdit {
   stock: number;
   commercial_unit: "UN" | "KG";
   in_barapi_id: number | null;
-  group?: string;
+  group: string;
+  date_update: string;
 }
 
 export type propsProductsResponse = { [key: string]: propsProductEdit[] };
@@ -104,6 +107,7 @@ export default function Page({
       <div className="mt-4" ref={parentAnimation}>
         {products &&
           products.map((product) => {
+            const dataAtual = new Date();
             return (
               <div
                 className="grid grid-cols-[1fr_4rem] mt-4 border-b border-black/40 pb-2"
@@ -113,7 +117,43 @@ export default function Page({
                   <h3 className="font-bold text-base text-black/80 line-clamp-1">
                     {product.name}
                   </h3>
-                  <div className="grid grid-cols-[7rem_4rem_5rem_3rem] justify-center gap-2">
+                  <div className="grid grid-cols-[1rem_7rem_4rem_4rem_3rem] justify-center gap-2">
+                    <Popover.Root>
+                      <Popover.Trigger asChild>
+                        <button
+                          className="rounded-full w-6 h-6 flex items-center justify-center"
+                          style={{
+                            color:
+                              product?.date_update &&
+                              parseInt(product.date_update) >=
+                                dataAtual.setHours(0, 0, 0, 0) &&
+                              parseInt(product.date_update) <
+                                dataAtual.setHours(23, 59, 59, 999)
+                                ? "#00CE52"
+                                : "#ff4f00",
+                          }}
+                        >
+                          <FaInfoCircle />
+                        </button>
+                      </Popover.Trigger>
+                      <Popover.Portal>
+                        <Popover.Content
+                          className="rounded p-5 w-[260px] bg-white shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] will-change-[transform,opacity]"
+                          sideOffset={5}
+                        >
+                          {product?.date_update && (
+                            <p className="font-semibold text-sm text-black/50">
+                              Atualizado em:{" "}
+                              <strong className="font-bold">
+                                {formatDate(parseInt(product.date_update))}
+                              </strong>
+                            </p>
+                          )}
+                          <Popover.Close />
+                          <Popover.Arrow className="fill-white" />{" "}
+                        </Popover.Content>
+                      </Popover.Portal>
+                    </Popover.Root>
                     <p className="font-semibold text-sm text-black/50 flex-1 flex items-center justify-center">
                       {product.bar_code}
                     </p>
@@ -142,7 +182,11 @@ export default function Page({
         <Popup onClose={() => setProductEdit(null)}>
           <PopupProductEdit
             product={productEdit}
-            onSuccess={() => setProductEdit(null)}
+            businessSlug={business_slug}
+            onSuccess={() => {
+              refetch();
+              setProductEdit(null);
+            }}
           />
         </Popup>
       )}

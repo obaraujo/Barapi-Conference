@@ -38,3 +38,18 @@ export function getInfoQuantity(name: string) {
     }
   }
 }
+
+export function formatDate(data: string | Date | number): string {
+  const date = new Date(data);
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+
+  const hour = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  const dateFormatted = `${day}/${month}/${year} às ${hour}:${minutes}`;
+
+  return dateFormatted;
+}
