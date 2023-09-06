@@ -18,19 +18,19 @@ export function Navigation({ prefix = "" }: { prefix?: string }) {
 
   const links: linkProps[] = [
     {
-      path: `/${prefix}`,
+      path: `/conferencia/${prefix}`,
       count: quantityItems.pending,
       title: "Pegar",
       color: "orange",
     },
     {
-      path: `/${prefix}/revision`,
+      path: `/conferencia/${prefix}/revision`,
       count: quantityItems.revision,
       title: "Revisar",
       color: "yellow",
     },
     {
-      path: `/${prefix}/complete`,
+      path: `/conferencia/${prefix}/complete`,
       count: quantityItems.complete,
       title: "Pronto",
       color: "green",
