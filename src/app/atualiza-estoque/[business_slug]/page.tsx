@@ -5,6 +5,7 @@ import { PopupProductEdit } from "@/components/PopupProductEdit";
 import { BarcodeScanner } from "@/components/Scanner";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { formatCurrencyBRL } from "barapi";
+import "barapi/dist/tailwind.css";
 import { useScanner } from "contexts/scanner";
 import { useEffect, useState, useTransition } from "react";
 import { BiScan } from "react-icons/bi";
