@@ -17,6 +17,7 @@ export function Popup({
   const [positionBoundY, setPositionBoundY] = useState(0);
   const [heightPopup, setHeightPopup] = useState(0);
   const popup = useRef<HTMLElement | null>(null);
+  const elementScroll = useRef<HTMLDivElement | null>(null);
 
   function handleStop(e, data: DraggableData) {
     const heightWindow = window.innerHeight;
@@ -61,7 +62,7 @@ export function Popup({
 
     setHeight(popup.current.getBoundingClientRect().height);
 
-    const handleBackButton = (event) => {
+    const handleBackButton = () => {
       onClose();
     };
 
@@ -80,6 +81,8 @@ export function Popup({
     }
   }
 
+  function handleScroll() {}
+
   return (
     <Portal.Root>
       <div
@@ -89,11 +92,23 @@ export function Popup({
       <Draggable
         axis="y"
         handle=".handle"
+        cancel=".not-drag"
         defaultPosition={{ y: 1000, x: 0 }}
         position={positionY ? { y: positionY, x: 0 } : undefined}
         grid={[1, 1]}
         scale={1}
         onStop={handleStop}
+        onDrag={() => {
+          const scrollTop = elementScroll.current.scrollTop;
+          const scrollMax =
+            elementScroll.current.clientHeight -
+            elementScroll.current.scrollHeight;
+          if (scrollTop === 1 || scrollMax === scrollTop) {
+            elementScroll.current.classList.remove("not-drag");
+          } else {
+            elementScroll.current.classList.add("not-drag");
+          }
+        }}
         bounds={{ top: positionBoundY }}
       >
         <main
@@ -102,10 +117,10 @@ export function Popup({
           style={{
             transition: "all 0.25s",
           }}
-          className={`fixed p-4 top-0 left-0 right-0 z-50 overflow-hidden  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi`}
+          className={`fixed handle p-4 top-0 left-0 right-0 z-50 overflow-hidden  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi`}
         >
           <div
-            className="handle w-full h-10 absolute z-20 inset-0 flex items-center justify-center"
+            className=" w-full h-10 absolute z-20 inset-0 flex items-center justify-center"
             style={{
               backgroundImage:
                 "linear-gradient(180deg, rgb(255, 255, 255) 75%, rgba(255, 255, 255, 0) 100%)",
@@ -113,7 +128,20 @@ export function Popup({
           >
             <div className="bg-gray-400 w-20 h-3 rounded-full hover:bg-gray-300 transition-all cursor-pointer"></div>
           </div>
-          <div className="pt-8 relative inset-0 z-10 scrollbar-hidden md:scrollbar-show max-h-[calc(100vh-50px)] overflow-y-auto pb-4">
+          <div
+            ref={elementScroll}
+            onScroll={(e) => {
+              const scrollTop = e.currentTarget.scrollTop;
+              const scrollMax =
+                e.currentTarget.clientHeight - e.currentTarget.scrollHeight;
+              if (scrollTop === 0 || scrollMax === scrollTop) {
+                e.currentTarget.classList.remove("not-drag");
+              } else {
+                e.currentTarget.classList.add("not-drag");
+              }
+            }}
+            className="not-drag pt-8 relative inset-0 z-10 scrollbar-hidden md:scrollbar-show max-h-[calc(100vh-50px)] overflow-y-auto pb-4"
+          >
             {children}
           </div>
         </main>
