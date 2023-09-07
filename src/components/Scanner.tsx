@@ -78,7 +78,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] data-[active=false]:invisible"
+      className="fixed inset-0 z-[9998] data-[active=false]:invisible"
       data-active={isScanning && activeScanner}
     >
       <button
@@ -98,7 +98,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
         </Popover.Trigger>
         <Popover.Portal className="">
           <Popover.Content
-            className="rounded p-5 w-[260px] relative z-50 bg-white shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade"
+            className="rounded p-5 w-[260px] relative z-[9999] bg-white shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2),0_0_0_2px_theme(colors.violet7)] will-change-[transform,opacity] data-[state=open]:data-[side=top]:animate-slideDownAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade"
             sideOffset={5}
           >
             <div className="flex flex-col gap-2">
@@ -170,7 +170,7 @@ export function BarcodeScanner({ onRead }: BarcodeScannerProps) {
               )}
             </div>
             <Popover.Close
-              className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
+              className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center absolute top-[5px] right-[5px] focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
               aria-label="Close"
             >
               <FaXmark size={24} />
