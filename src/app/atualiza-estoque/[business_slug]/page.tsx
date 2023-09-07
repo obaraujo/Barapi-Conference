@@ -9,6 +9,7 @@ import { formatCurrencyBRL } from "barapi";
 import "barapi/dist/tailwind.css";
 import { useScanner } from "contexts/scanner";
 import { formatDate } from "functions";
+import { Metadata } from "next";
 import { useEffect, useState, useTransition } from "react";
 import { BiScan } from "react-icons/bi";
 import { FaEdit, FaInfoCircle } from "react-icons/fa";
@@ -29,6 +30,10 @@ export interface propsProductEdit {
 }
 
 export type propsProductsResponse = { [key: string]: propsProductEdit[] };
+
+export const metadata: Metadata = {
+  title: "Atualização de estoque",
+};
 
 export default function Page({
   params: { business_slug },
