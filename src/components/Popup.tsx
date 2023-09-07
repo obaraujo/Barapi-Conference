@@ -61,6 +61,12 @@ export function Popup({
     history.pushState({}, "popup");
 
     setHeight(popup.current.getBoundingClientRect().height);
+    const scrollMax =
+      elementScroll.current.scrollHeight - elementScroll.current.clientHeight;
+
+    if (scrollMax > 0) {
+      elementScroll.current.classList.add("not-drag");
+    }
 
     const handleBackButton = () => {
       onClose();
@@ -92,7 +98,7 @@ export function Popup({
       <Draggable
         axis="y"
         handle=".handle"
-        cancel=".not-drag"
+        cancel=".not-drag, input, button"
         defaultPosition={{ y: 1000, x: 0 }}
         position={positionY ? { y: positionY, x: 0 } : undefined}
         grid={[1, 1]}
@@ -129,15 +135,7 @@ export function Popup({
                 e.currentTarget.classList.add("not-drag");
               }
             }}
-            onTouchStart={(e) => {
-              const scrollMax =
-                e.currentTarget.scrollHeight - e.currentTarget.clientHeight;
-
-              if (scrollMax > 0) {
-                e.currentTarget.classList.add("not-drag");
-              }
-            }}
-            className="not-drag pt-8 relative inset-0 z-10 scrollbar-hidden md:scrollbar-show max-h-[calc(100vh-50px)] overflow-y-auto pb-4"
+            className="pt-8 relative inset-0 z-10 scrollbar-hidden md:scrollbar-show max-h-[calc(100vh-50px)] overflow-y-auto pb-4"
           >
             {children}
           </div>
