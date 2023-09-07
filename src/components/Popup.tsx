@@ -20,7 +20,7 @@ export function Popup({
   const elementScroll = useRef<HTMLDivElement | null>(null);
 
   function handleStop(e, data: DraggableData) {
-    handleScroll();
+    addNotDrag();
 
     const heightWindow = window.innerHeight;
 
@@ -63,7 +63,7 @@ export function Popup({
     history.pushState({}, "popup");
 
     setHeight(popup.current.getBoundingClientRect().height);
-    handleScroll();
+    addNotDrag();
 
     const handleBackButton = () => {
       onClose();
@@ -84,11 +84,22 @@ export function Popup({
     }
   }
 
-  function handleScroll() {
+  function addNotDrag() {
     const scrollMax =
       elementScroll.current.scrollHeight - elementScroll.current.clientHeight;
 
     if (scrollMax > 0) {
+      elementScroll.current.classList.add("not-drag");
+    }
+  }
+
+  function handleScroll() {
+    const scrollTop = elementScroll.current.scrollTop;
+    const scrollMax =
+      elementScroll.current.scrollHeight - elementScroll.current.clientHeight;
+    if (scrollTop === 0 || scrollMax === scrollTop) {
+      elementScroll.current.classList.remove("not-drag");
+    } else {
       elementScroll.current.classList.add("not-drag");
     }
   }
@@ -129,16 +140,7 @@ export function Popup({
           </div>
           <div
             ref={elementScroll}
-            onScroll={(e) => {
-              const scrollTop = e.currentTarget.scrollTop;
-              const scrollMax =
-                e.currentTarget.scrollHeight - e.currentTarget.clientHeight;
-              if (scrollTop === 0 || scrollMax === scrollTop) {
-                e.currentTarget.classList.remove("not-drag");
-              } else {
-                e.currentTarget.classList.add("not-drag");
-              }
-            }}
+            onScroll={handleScroll}
             onTouchStart={handleScroll}
             className="pt-8 relative inset-0 z-10 scrollbar-hidden md:scrollbar-show max-h-[calc(100vh-50px)] overflow-y-auto pb-4"
           >
