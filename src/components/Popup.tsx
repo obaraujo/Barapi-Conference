@@ -59,13 +59,7 @@ export function Popup({
   useEffect(() => {
     history.pushState({}, "popup", "");
 
-    const heightPopup = popup.current.getBoundingClientRect().height;
-
-    if (heightPopup >= window.innerHeight) {
-      setHeightPopup(window.innerHeight - 1);
-    } else {
-      setHeightPopup(heightPopup);
-    }
+    setHeight(popup.current.getBoundingClientRect().height);
 
     const handleBackButton = (event) => {
       onClose();
@@ -77,6 +71,14 @@ export function Popup({
       window.removeEventListener("popstate", handleBackButton);
     };
   }, []);
+
+  function setHeight(height: number) {
+    if (height >= window.innerHeight) {
+      setHeightPopup(window.innerHeight - 1);
+    } else {
+      setHeightPopup(height);
+    }
+  }
 
   return (
     <Portal.Root>
@@ -96,6 +98,7 @@ export function Popup({
       >
         <main
           ref={popup}
+          onLoad={(e) => setHeight(e.currentTarget.clientHeight)}
           style={{
             transition: "all 0.25s",
           }}
