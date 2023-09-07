@@ -1,20 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer components {
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
 
-canvas.drawing,
-canvas.drawingBuffer {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
+  .scrollbar-show::-webkit-scrollbar {
+    display: initial;
+    width: 12px;
+    border-radius: 20px;
+  }
 
-#interactive.viewport > canvas,
-#interactive.viewport > video {
-  max-width: 100%;
-  width: 100%;
-}
+  .scrollbar-show::-webkit-scrollbar-track,
+  .scrollbar-show::-webkit-scrollbar-thumb {
+    transition: all 0.5s;
+  }
 
-#interactive.viewport > br {
-  display: none;
+  .scrollbar-show::-webkit-scrollbar-thumb {
+    cursor: pointer;
+  }
+
+  .scrollbar-show:hover::-webkit-scrollbar-track {
+    background: #eaeaea;
+  }
+
+  .scrollbar-show:hover::-webkit-scrollbar-thumb {
+    background-color: #a5a5a5;
+    border-radius: 20px;
+    border: 3px solid #eaeaea;
+  }
 }

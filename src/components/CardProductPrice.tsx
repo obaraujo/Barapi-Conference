@@ -15,7 +15,7 @@ export function CardProductPrice({ regular, price }: CardProductPriceProps) {
     <>
       {regular && regular !== price && (
         <div className="mt-2 text-base font-semibold ">
-          <span className="mr-1  text-black/50 line-through">
+          <span className="mr-1  text-black opacity-50 line-through">
             {formatCurrencyBRL(regular)}
           </span>
           <span className="whitespace-nowrap rounded-md bg-orange-barapi px-2  text-white">

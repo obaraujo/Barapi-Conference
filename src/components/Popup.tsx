@@ -44,13 +44,27 @@ export function Popup({
     const heightPopup = popup.current.getBoundingClientRect().height;
     const heightWindow = window.innerHeight;
 
-    setPositionY(heightWindow - heightPopup);
-    setPositionBoundY(heightWindow - heightPopup - 5);
+    if (heightPopup >= window.innerHeight) {
+      setPositionY(1);
+    } else {
+      setPositionY(heightWindow - heightPopup);
+    }
 
+    setPositionBoundY(heightWindow - heightPopup - 5);
     return () => {
       document.body.style.overflowY = "auto";
     };
   }, [popup.current, heightPopup]);
+
+  useEffect(() => {
+    const heightPopup = popup.current.getBoundingClientRect().height;
+
+    if (heightPopup >= window.innerHeight) {
+      setHeightPopup(window.innerHeight - 1);
+    } else {
+      setHeightPopup(heightPopup);
+    }
+  }, []);
 
   return (
     <Portal.Root>
@@ -70,16 +84,23 @@ export function Popup({
       >
         <main
           ref={popup}
-          onLoad={(e) => setHeightPopup(e.currentTarget.clientHeight)}
           style={{
             transition: "all 0.25s",
           }}
-          className={`fixed p-4 top-0 left-0 right-0 z-50  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi`}
+          className={`fixed p-4 top-0 left-0 right-0 z-50 overflow-hidden  bg-white rounded-tr-2xl rounded-tl-2xl border-t border-orange-barapi`}
         >
-          <div className="handle w-full h-10 absolute inset-0 flex items-center justify-center">
+          <div
+            className="handle w-full h-10 absolute z-20 inset-0 flex items-center justify-center"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgb(255, 255, 255) 75%, rgba(255, 255, 255, 0) 100%)",
+            }}
+          >
             <div className="bg-gray-400 w-20 h-3 rounded-full hover:bg-gray-300 transition-all cursor-pointer"></div>
           </div>
-          <div className="mt-8 relative">{children}</div>
+          <div className="pt-8 relative inset-0 z-10 scrollbar-hidden md:scrollbar-show max-h-[calc(100vh-50px)] overflow-y-auto pb-4">
+            {children}
+          </div>
         </main>
       </Draggable>
     </Portal.Root>
