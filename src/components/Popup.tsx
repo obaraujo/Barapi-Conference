@@ -58,7 +58,7 @@ export function Popup({
   }, [popup.current, heightPopup]);
 
   useEffect(() => {
-    history.pushState({}, "popup", "");
+    history.pushState({}, "popup");
 
     setHeight(popup.current.getBoundingClientRect().height);
 
@@ -98,17 +98,6 @@ export function Popup({
         grid={[1, 1]}
         scale={1}
         onStop={handleStop}
-        onDrag={() => {
-          const scrollTop = elementScroll.current.scrollTop;
-          const scrollMax =
-            elementScroll.current.clientHeight -
-            elementScroll.current.scrollHeight;
-          if (scrollTop === 1 || scrollMax === scrollTop) {
-            elementScroll.current.classList.remove("not-drag");
-          } else {
-            elementScroll.current.classList.add("not-drag");
-          }
-        }}
         bounds={{ top: positionBoundY }}
       >
         <main
@@ -133,10 +122,18 @@ export function Popup({
             onScroll={(e) => {
               const scrollTop = e.currentTarget.scrollTop;
               const scrollMax =
-                e.currentTarget.clientHeight - e.currentTarget.scrollHeight;
+                e.currentTarget.scrollHeight - e.currentTarget.clientHeight;
               if (scrollTop === 0 || scrollMax === scrollTop) {
                 e.currentTarget.classList.remove("not-drag");
               } else {
+                e.currentTarget.classList.add("not-drag");
+              }
+            }}
+            onTouchStart={(e) => {
+              const scrollMax =
+                e.currentTarget.scrollHeight - e.currentTarget.clientHeight;
+
+              if (scrollMax > 0) {
                 e.currentTarget.classList.add("not-drag");
               }
             }}
