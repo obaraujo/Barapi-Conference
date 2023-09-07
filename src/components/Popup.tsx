@@ -140,7 +140,8 @@ export function Popup({
           </div>
           <div
             ref={elementScroll}
-            onTouchEnd={handleScroll}
+            onScroll={handleScroll}
+            onTouchStart={handleScroll}
             className="pt-8 relative inset-0 z-10 scrollbar-hidden md:scrollbar-show max-h-[calc(100vh-50px)] overflow-y-auto pb-4"
           >
             {children}
