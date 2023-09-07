@@ -20,6 +20,8 @@ export function Popup({
   const elementScroll = useRef<HTMLDivElement | null>(null);
 
   function handleStop(e, data: DraggableData) {
+    handleScroll();
+
     const heightWindow = window.innerHeight;
 
     if (heightWindow <= heightPopup / 2 + data.y) {
@@ -61,12 +63,7 @@ export function Popup({
     history.pushState({}, "popup");
 
     setHeight(popup.current.getBoundingClientRect().height);
-    const scrollMax =
-      elementScroll.current.scrollHeight - elementScroll.current.clientHeight;
-
-    if (scrollMax > 0) {
-      elementScroll.current.classList.add("not-drag");
-    }
+    handleScroll();
 
     const handleBackButton = () => {
       onClose();
@@ -87,7 +84,14 @@ export function Popup({
     }
   }
 
-  function handleScroll() {}
+  function handleScroll() {
+    const scrollMax =
+      elementScroll.current.scrollHeight - elementScroll.current.clientHeight;
+
+    if (scrollMax > 0) {
+      elementScroll.current.classList.add("not-drag");
+    }
+  }
 
   return (
     <Portal.Root>
