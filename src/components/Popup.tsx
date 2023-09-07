@@ -57,6 +57,8 @@ export function Popup({
   }, [popup.current, heightPopup]);
 
   useEffect(() => {
+    history.pushState({}, "popup", "");
+
     const heightPopup = popup.current.getBoundingClientRect().height;
 
     if (heightPopup >= window.innerHeight) {
@@ -64,6 +66,16 @@ export function Popup({
     } else {
       setHeightPopup(heightPopup);
     }
+
+    const handleBackButton = (event) => {
+      onClose();
+    };
+
+    window.addEventListener("popstate", handleBackButton);
+
+    return () => {
+      window.removeEventListener("popstate", handleBackButton);
+    };
   }, []);
 
   return (
