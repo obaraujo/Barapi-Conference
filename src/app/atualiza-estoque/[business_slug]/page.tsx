@@ -31,7 +31,7 @@ export interface propsProductEdit {
 
 export type propsProductsResponse = { [key: string]: propsProductEdit[] };
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Atualização de estoque",
 };
 

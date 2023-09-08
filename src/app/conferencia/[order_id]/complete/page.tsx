@@ -3,7 +3,7 @@
 import { ContentSection } from "@/components/ContentSection";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Completo - Conferencia de compra",
 };
 
