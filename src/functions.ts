@@ -34,6 +34,10 @@ export function getInfoQuantity(name: string) {
 }
 
 export function formatDate(data: string | Date | number): string {
+  if (typeof data === "number" && data.toString().length === 10) {
+    data = (data + 10800) * 1000;
+  }
+
   const date = new Date(data);
 
   const day = date.getDate().toString().padStart(2, "0");

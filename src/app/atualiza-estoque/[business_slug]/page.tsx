@@ -28,6 +28,7 @@ export interface propsProductEdit {
   group: string;
   date_update: string;
   updated: boolean;
+  date_checked?: string;
   checked?: "on" | "off";
 }
 
@@ -157,6 +158,12 @@ export default function Page({ params: { business_slug } }: { params: { business
                             <p className="font-semibold text-sm text-black/50">
                               Atualizado em:{" "}
                               <strong className="font-bold">{formatDate(parseInt(product.date_update))}</strong>
+                            </p>
+                          )}
+                          {product?.date_checked && (
+                            <p className="font-semibold text-sm text-black/50">
+                              Sincronizado em:{" "}
+                              <strong className="font-bold">{formatDate(parseInt(product.date_checked))}</strong>
                             </p>
                           )}
                           <Popover.Close />
