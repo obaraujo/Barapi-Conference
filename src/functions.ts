@@ -35,7 +35,7 @@ export function getInfoQuantity(name: string) {
 
 export function formatDate(data: string | Date | number): string {
   if (typeof data === "number" && data.toString().length === 10) {
-    data = (data + 10800) * 1000;
+    data = data * 1000;
   }
 
   const date = new Date(data);
