@@ -12,7 +12,7 @@ import { formatDate } from "functions";
 import { Metadata } from "next";
 import { useEffect, useState, useTransition } from "react";
 import { BiScan } from "react-icons/bi";
-import { FaEdit, FaInfoCircle } from "react-icons/fa";
+import { FaCheckSquare, FaEdit, FaInfoCircle } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { apiBarapiV2 } from "services/api";
 
@@ -39,6 +39,7 @@ const metadata: Metadata = {
 export default function Page({ params: { business_slug } }: { params: { business_slug: string } }) {
   const [search, setSearch] = useState("");
   const [filterUpdated, setFilterUpdated] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const [products, setProducts] = useState<propsProductEdit[]>(null);
   const [productEdit, setProductEdit] = useState<propsProductEdit>(null);
   const { setActiveScanner } = useScanner();
@@ -75,13 +76,29 @@ export default function Page({ params: { business_slug } }: { params: { business
             .filter(
               (product) =>
                 (product.name.toLowerCase().includes(search) || product.bar_code.includes(search)) &&
-                !!product.updated === filterUpdated,
+                !!product.updated === filterUpdated &&
+                (!product.checked || product.checked !== "on"),
             )
             .slice(0, 20),
         );
       });
     }
-  }, [search, data]);
+  }, [search, filterUpdated, data]);
+
+  async function onSubmit(productId: string, group: string) {
+    setDisabled(true);
+    const form = new FormData();
+    form.append("product_id", productId.toString());
+    form.append("group", group.toString());
+    form.append("checked", "on");
+
+    await apiBarapiV2
+      .post(`/${business_slug}/products_sync`, form)
+      .catch(() => alert("Ocorreu um erro, chame do programador!"));
+
+    refetch();
+    setDisabled(false);
+  }
 
   return (
     <div className="mt-4">
@@ -105,14 +122,14 @@ export default function Page({ params: { business_slug } }: { params: { business
           <BiScan />
           Escanear
         </button>
-
-        <input type="checkbox" id="filter_updated" onChange={(e) => setFilterUpdated(e.currentTarget.checked)} />
-        <label htmlFor="filter_updated">Atualizados</label>
+        <p className="flex gap-2 font-bold text-base text-black/80">
+          <input type="checkbox" id="filter_updated" onClick={(e) => setFilterUpdated(e.currentTarget.checked)} />
+          <label htmlFor="filter_updated">Atualizados</label>
+        </p>
       </div>
       <div className="mt-4" ref={parentAnimation}>
         {products &&
           products.map((product) => {
-            const dataAtual = new Date();
             return (
               <div className="grid grid-cols-[1fr_3rem] mt-4 border-b border-black/40 pb-2" key={product.id}>
                 <div className="flex flex-col">
@@ -141,7 +158,7 @@ export default function Page({ params: { business_slug } }: { params: { business
                             </p>
                           )}
                           <Popover.Close />
-                          <Popover.Arrow className="fill-white" />{" "}
+                          <Popover.Arrow className="fill-white" />
                         </Popover.Content>
                       </Popover.Portal>
                     </Popover.Root>
@@ -159,12 +176,22 @@ export default function Page({ params: { business_slug } }: { params: { business
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setProductEdit(product)}
-                  className="flex justify-center items-center text-white bg-orange-barapi rounded-md"
-                >
-                  <FaEdit />
-                </button>
+                {product.updated ? (
+                  <button
+                    onClick={() => onSubmit(product.id, product.group)}
+                    disabled={disabled}
+                    className="flex justify-center items-center text-white bg-green-barapi rounded-md disabled:bg-gray-400"
+                  >
+                    <FaCheckSquare />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setProductEdit(product)}
+                    className="flex justify-center items-center text-white bg-orange-barapi rounded-md"
+                  >
+                    <FaEdit />
+                  </button>
+                )}
               </div>
             );
           })}
