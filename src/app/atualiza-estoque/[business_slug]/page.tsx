@@ -38,6 +38,7 @@ const metadata: Metadata = {
 
 export default function Page({ params: { business_slug } }: { params: { business_slug: string } }) {
   const [search, setSearch] = useState("");
+  const [filterUpdated, setFilterUpdated] = useState(false);
   const [products, setProducts] = useState<propsProductEdit[]>(null);
   const [productEdit, setProductEdit] = useState<propsProductEdit>(null);
   const { setActiveScanner } = useScanner();
@@ -71,7 +72,11 @@ export default function Page({ params: { business_slug } }: { params: { business
       setTransition(() => {
         setProducts(
           data.products
-            .filter((product) => product.name.toLowerCase().includes(search) || product.bar_code.includes(search))
+            .filter(
+              (product) =>
+                (product.name.toLowerCase().includes(search) || product.bar_code.includes(search)) &&
+                !!product.updated === filterUpdated,
+            )
             .slice(0, 20),
         );
       });
@@ -90,6 +95,7 @@ export default function Page({ params: { business_slug } }: { params: { business
           placeholder="Procure por nome ou código de barras"
           className="rounded-xl border border-orange-barapi py-2 px-3 text-base w-full h-14"
         />
+
         <button
           onClick={() => {
             setActiveScanner(true);
@@ -99,6 +105,9 @@ export default function Page({ params: { business_slug } }: { params: { business
           <BiScan />
           Escanear
         </button>
+
+        <input type="checkbox" id="filter_updated" onChange={(e) => setFilterUpdated(e.currentTarget.checked)} />
+        <label htmlFor="filter_updated">Atualizados</label>
       </div>
       <div className="mt-4" ref={parentAnimation}>
         {products &&

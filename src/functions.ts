@@ -11,22 +11,16 @@ export function getInfoQuantity(name: string) {
 
       const lengthUnit = unit.length;
       const wordUnit = word.slice(word.length - lengthUnit, word.length);
-      const wordQuantity = word
-        .slice(0, word.length - lengthUnit)
-        .replace(",", ".");
+      const wordQuantity = word.slice(0, word.length - lengthUnit).replace(",", ".");
 
       if (wordUnit === unit && parseFloat(wordQuantity)) {
         switch (unit) {
           case "G":
             return `${wordQuantity} gramas`;
           case "L":
-            return `${wordQuantity} ${
-              parseFloat(wordQuantity) > 1 ? "litros" : "litro"
-            }`;
+            return `${wordQuantity} ${parseFloat(wordQuantity) > 1 ? "litros" : "litro"}`;
           case "KG":
-            return `${wordQuantity} ${
-              parseFloat(wordQuantity) > 1 ? "quilos" : "quilo"
-            }`;
+            return `${wordQuantity} ${parseFloat(wordQuantity) > 1 ? "quilos" : "quilo"}`;
           default:
             return word;
         }
@@ -40,6 +34,10 @@ export function getInfoQuantity(name: string) {
 }
 
 export function formatDate(data: string | Date | number): string {
+  if (typeof data === "number") {
+    data = data * 1000;
+  }
+
   const date = new Date(data);
 
   const day = date.getDate().toString().padStart(2, "0");
