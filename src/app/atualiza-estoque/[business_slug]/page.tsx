@@ -27,6 +27,7 @@ export interface propsProductEdit {
   in_barapi_id: number | null;
   group: string;
   date_update: string;
+  updated: boolean;
 }
 
 export type propsProductsResponse = { [key: string]: propsProductEdit[] };
@@ -35,11 +36,7 @@ const metadata: Metadata = {
   title: "Atualização de estoque",
 };
 
-export default function Page({
-  params: { business_slug },
-}: {
-  params: { business_slug: string };
-}) {
+export default function Page({ params: { business_slug } }: { params: { business_slug: string } }) {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState<propsProductEdit[]>(null);
   const [productEdit, setProductEdit] = useState<propsProductEdit>(null);
@@ -50,9 +47,7 @@ export default function Page({
   const { isError, data, refetch } = useQuery(
     `get_order_products_${business_slug}`,
     async () => {
-      const { data } = await apiBarapiV2
-        .get<propsProductsResponse>(`/${business_slug}/products_sync`)
-        .catch();
+      const { data } = await apiBarapiV2.get<propsProductsResponse>(`/${business_slug}/products_sync`).catch();
 
       return {
         ...data,
@@ -60,7 +55,7 @@ export default function Page({
           .map((group) =>
             data.products[group].map((product) => {
               return { ...product, group };
-            })
+            }),
           )
           .flatMap((productsSync) => productsSync),
       };
@@ -68,7 +63,7 @@ export default function Page({
 
     {
       onError: (e) => console.log(e),
-    }
+    },
   );
 
   useEffect(() => {
@@ -76,12 +71,8 @@ export default function Page({
       setTransition(() => {
         setProducts(
           data.products
-            .filter(
-              (product) =>
-                product.name.toLowerCase().includes(search) ||
-                product.bar_code.includes(search)
-            )
-            .slice(0, 20)
+            .filter((product) => product.name.toLowerCase().includes(search) || product.bar_code.includes(search))
+            .slice(0, 20),
         );
       });
     }
@@ -114,28 +105,16 @@ export default function Page({
           products.map((product) => {
             const dataAtual = new Date();
             return (
-              <div
-                className="grid grid-cols-[1fr_3rem] mt-4 border-b border-black/40 pb-2"
-                key={product.id}
-              >
+              <div className="grid grid-cols-[1fr_3rem] mt-4 border-b border-black/40 pb-2" key={product.id}>
                 <div className="flex flex-col">
-                  <h3 className="font-bold text-base text-black/80 line-clamp-1">
-                    {product.name}
-                  </h3>
+                  <h3 className="font-bold text-base text-black/80 line-clamp-1">{product.name}</h3>
                   <div className="grid grid-cols-[1rem_1fr_3rem_4rem_3rem] justify-center gap-2">
                     <Popover.Root>
                       <Popover.Trigger asChild>
                         <button
                           className="rounded-full w-6 h-6 flex items-center justify-center"
                           style={{
-                            color:
-                              product?.date_update &&
-                              parseInt(product.date_update) >=
-                                dataAtual.setHours(0, 0, 0, 0) &&
-                              parseInt(product.date_update) <
-                                dataAtual.setHours(23, 59, 59, 999)
-                                ? "#00CE52"
-                                : "#ff4f00",
+                            color: product?.updated ? "#00CE52" : "#ff4f00",
                           }}
                         >
                           <FaInfoCircle />
@@ -149,9 +128,7 @@ export default function Page({
                           {product?.date_update && (
                             <p className="font-semibold text-sm text-black/50">
                               Atualizado em:{" "}
-                              <strong className="font-bold">
-                                {formatDate(parseInt(product.date_update))}
-                              </strong>
+                              <strong className="font-bold">{formatDate(parseInt(product.date_update))}</strong>
                             </p>
                           )}
                           <Popover.Close />
