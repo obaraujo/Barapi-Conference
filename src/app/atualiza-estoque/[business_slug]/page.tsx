@@ -28,6 +28,7 @@ export interface propsProductEdit {
   group: string;
   date_update: string;
   updated: boolean;
+  checked?: "on" | "off";
 }
 
 export type propsProductsResponse = { [key: string]: propsProductEdit[] };
@@ -73,12 +74,13 @@ export default function Page({ params: { business_slug } }: { params: { business
       setTransition(() => {
         setProducts(
           data.products
-            .filter(
-              (product) =>
-                (product.name.toLowerCase().includes(search) || product.bar_code.includes(search)) &&
-                !!product.updated === filterUpdated &&
-                (!product.checked || product.checked !== "on"),
-            )
+            .filter((product) => {
+              let filter = product.name.toLowerCase().includes(search) || product.bar_code.includes(search);
+              filter = filter && (!!product.updated === filterUpdated || product.checked === "on");
+              filter = filter && !(filterUpdated && product.checked === "on");
+
+              return filter;
+            })
             .slice(0, 20),
         );
       });
@@ -176,7 +178,7 @@ export default function Page({ params: { business_slug } }: { params: { business
                     </p>
                   </div>
                 </div>
-                {product.updated ? (
+                {product.updated && product?.checked !== "on" ? (
                   <button
                     onClick={() => onSubmit(product.id, product.group)}
                     disabled={disabled}

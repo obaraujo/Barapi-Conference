@@ -25,6 +25,7 @@ export function PopupProductEdit({
     form.append("bar_code", product.bar_code.toString());
     form.append("group", product.group.toString());
     form.append("date_update", Date.now().toString());
+    form.append("checked", "off");
 
     Object.entries(data).forEach((d) => {
       form.append(d[0], d[1]);
@@ -39,27 +40,9 @@ export function PopupProductEdit({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <Input
-        label="Nome"
-        register={register}
-        value={product.name.toString()}
-        name="name"
-        type="text"
-      />
-      <Input
-        label="Estoque"
-        register={register}
-        value={product.stock.toString()}
-        name="stock"
-        type="number"
-      />
-      <Input
-        label="Preço"
-        register={register}
-        value={product.price.toString()}
-        name="price"
-        type="number"
-      />
+      <Input label="Nome" register={register} value={product.name.toString()} name="name" type="text" />
+      <Input label="Estoque" register={register} value={product.stock.toString()} name="stock" type="number" />
+      <Input label="Preço" register={register} value={product.price.toString()} name="price" type="number" />
       <button
         disabled={disabled}
         className="flex gap-1 items-center w-full bg-orange-barapi rounded-lg flex-1 text-white font-bold px-6 py-3 justify-center disabled:bg-gray-400"
