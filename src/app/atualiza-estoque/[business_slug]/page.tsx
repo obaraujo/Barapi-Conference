@@ -197,6 +197,8 @@ export default function Page({ params: { business_slug } }: { params: { business
               </div>
             );
           })}
+
+        {products && products.length < 1 && <div className="flex items-center justify-center">Opa, sem produtos!</div>}
       </div>
       {productEdit && (
         <Popup onClose={() => setProductEdit(null)}>
