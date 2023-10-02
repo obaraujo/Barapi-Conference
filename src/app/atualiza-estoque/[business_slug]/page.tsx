@@ -69,15 +69,13 @@ export default function Page({ params: { business_slug } }: { params: { business
     if (data?.products) {
       setTransition(() => {
         setProducts(
-          data.products
-            .filter((product) => {
-              let filter = product.name.toLowerCase().includes(search) || product.bar_code.includes(search);
-              filter = filter && (!!product.updated === filterUpdated || product.checked === "on");
-              filter = filter && !(filterUpdated && product.checked === "on");
+          data.products.filter((product) => {
+            let filter = product.name.toLowerCase().includes(search) || product.bar_code.includes(search);
+            filter = filter && (!!product.updated === filterUpdated || product.checked === "on");
+            filter = filter && !(filterUpdated && product.checked === "on");
 
-              return filter;
-            })
-            .slice(0, 20),
+            return filter;
+          }),
         );
       });
     }
@@ -105,6 +103,8 @@ export default function Page({ params: { business_slug } }: { params: { business
           <BiScan />
           Escanear
         </button>
+        {products && <div>{products.length} produtos</div>}
+
         <p className="flex gap-2 font-bold text-base text-black/80">
           <input type="checkbox" id="filter_updated" onClick={(e) => setFilterUpdated(e.currentTarget.checked)} />
           <label htmlFor="filter_updated">Atualizados</label>
@@ -112,9 +112,10 @@ export default function Page({ params: { business_slug } }: { params: { business
       </div>
       <div className="mt-4" ref={parentAnimation}>
         {products &&
-          products.map((product) => {
+          products.slice(0, 20).map((product) => {
             return (
               <CardProductListUpdate
+                key={`${product.in_barapi_id}-${product.id}-${product.bar_code}`}
                 product={product}
                 onSuccess={() => {
                   refetch();
