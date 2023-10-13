@@ -1,17 +1,11 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import Loading from "app/loading";
 import { useOrder } from "contexts/order";
-import { useState } from "react";
 import { ProductItem } from "./ProductItem";
 
-export function ContentSection({
-  status,
-}: {
-  status: "pending" | "revision" | "complete";
-}) {
+export function ContentSection({ status }: { status: "pending" | "revision" | "complete" }) {
   const { orderData } = useOrder();
   const [parent] = useAutoAnimate();
-  const [bar, setBar] = useState();
 
   return (
     <div ref={parent} className="mt-4 z-0">
@@ -22,9 +16,7 @@ export function ContentSection({
           })
         ) : (
           <>
-            <div className="flex items-center justify-center ">
-              Opa! Ainda não há nenhum produto aqui.
-            </div>
+            <div className="flex items-center justify-center ">Opa! Ainda não há nenhum produto aqui.</div>
           </>
         )
       ) : (

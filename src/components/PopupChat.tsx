@@ -2,21 +2,13 @@ import { useOrder } from "contexts/order";
 import { BsChatTextFill } from "react-icons/bs";
 import { TbSend } from "react-icons/tb";
 
-export function PopupChat({
-  quantityReal = 0,
-  onSendMessage,
-}: {
-  quantityReal?: number;
-  onSendMessage: () => void;
-}) {
-  const { productFetched } = useOrder();
+export function PopupChat({ quantityReal = 0, onSendMessage }: { quantityReal?: number; onSendMessage: () => void }) {
   const {
+    productFetched,
     orderData: { customer },
   } = useOrder();
 
-  function handleSendMessage(
-    type?: "outOfStokeWithOthers" | "outOfStokeWithoutOthers" | "lowerQuantity"
-  ) {
+  function handleSendMessage(type?: "outOfStokeWithOthers" | "outOfStokeWithoutOthers" | "lowerQuantity") {
     let message = "";
     if (type) {
       const messages = {
@@ -24,21 +16,20 @@ export function PopupChat({
         outOfStokeWithoutOthers: `O produto "{productName}" está em falta. Infelizmente não temos outras opções.`,
         lowerQuantity: `Você pediu {quantity} "{productName}", porém infelizmente só temos {quantityReal}.`,
       };
+
       message = encodeURIComponent(
         messages[type]
           .replace("{productName}", productFetched.name)
           .replace("{customerName}", customer.name)
           .replace("{quantity}", productFetched.quantity.toString())
-          .replace("{quantityReal}", quantityReal.toString())
+          .replace("{quantityReal}", quantityReal.toString()),
       );
     }
 
     const phoneNumber = `55${customer.phone.replace(/\D/g, "")}`;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     let url: string;
-    url = `https://${
-      isMobile ? "api" : "web"
-    }.whatsapp.com/send/?phone=${phoneNumber}`;
+    url = `https://${isMobile ? "api" : "web"}.whatsapp.com/send/?phone=${phoneNumber}`;
     if (message) {
       url += `&text=${message}`;
     }

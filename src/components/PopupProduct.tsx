@@ -48,13 +48,11 @@ export function PopupProduct({ productId }: { productId: number }) {
   const { isError, data: product } = useQuery(
     `get_order_data_product_${productId}`,
     async () => {
-      const { data } = await apiBarapiV2.get<ProductProps>(
-        `conference/item/${productId}`
-      );
+      const { data } = await apiBarapiV2.get<ProductProps>(`conference/item/${productId}`);
       return data;
     },
 
-    { onError: (e) => console.log(e) }
+    { onError: (e) => console.log(e) },
   );
 
   async function handleVerification(state: "complete" | "revision") {
@@ -76,16 +74,9 @@ export function PopupProduct({ productId }: { productId: number }) {
         ) : (
           <main className="pb-1">
             <Gallery images={[product.image, ...product.gallery]} />
-            <span className="font-bold text-4xl text-orange-barapi">
-              {product.quantity}x
-            </span>
-            <h3 className="font-semibold text-base capitalize">
-              {product.name}
-            </h3>
-            <CardProductPrice
-              price={product.price}
-              regular={product.regular_price}
-            />
+            <span className="font-bold text-4xl text-orange-barapi">{product.quantity}x</span>
+            <h3 className="font-semibold text-base capitalize">{product.name}</h3>
+            <CardProductPrice price={product.price} regular={product.regular_price} />
             <div className="mt-4 text-gray-500">
               <div>
                 <strong className="font-bold">Código de barras: </strong>
@@ -93,9 +84,7 @@ export function PopupProduct({ productId }: { productId: number }) {
               </div>
               <div>
                 <strong className="font-bold">Conteúdo: </strong>
-                <span className="font-semibold">
-                  {getInfoQuantity(product.name)}
-                </span>
+                <span className="font-semibold">{getInfoQuantity(product.name)}</span>
               </div>
               <div>
                 <strong className="font-bold">Estoque: </strong>
@@ -113,7 +102,10 @@ export function PopupProduct({ productId }: { productId: number }) {
                   </button>
                 )}
                 <button
-                  onClick={() => setOpenChat(true)}
+                  onClick={() => {
+                    setOpenChat(true);
+                    setProductFetched(product);
+                  }}
                   className="flex gap-1 items-center border-orange-barapi border  rounded-lg flex-1 text-orange-barapi font-bold px-6 py-3 justify-center disabled:bg-gray-400"
                 >
                   <BsChatTextFill /> Chat

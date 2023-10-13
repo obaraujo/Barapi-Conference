@@ -11,11 +11,7 @@ import { Popup } from "./Popup";
 import { PopupChat } from "./PopupChat";
 import { ProductItem } from "./ProductItem";
 
-export function PopupConfirmProduct({
-  product,
-}: {
-  product: OrderProductProps;
-}) {
+export function PopupConfirmProduct({ product }: { product: OrderProductProps }) {
   const [quantity, setQuantity] = useState(0);
   const { setProductFetched } = useOrder();
   const [openChat, setOpenChat] = useState(false);
@@ -46,10 +42,7 @@ export function PopupConfirmProduct({
         </header>
         <main>
           <ProductItem {...product} scan={false} />
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col gap-3 mt-3"
-          >
+          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3 mt-3">
             <fieldset className="flex justify-between">
               <button
                 onClick={() => setQuantity((oldQuantity) => oldQuantity - 1)}
@@ -88,7 +81,10 @@ export function PopupConfirmProduct({
                 </button>
               )}
               <button
-                onClick={() => setOpenChat(true)}
+                onClick={() => {
+                  setOpenChat(true);
+                  setProductFetched(product);
+                }}
                 className="flex  items-center justify-center gap-1 bg-white flex-1 border-orange-barapi border rounded-lg px-4 py-3 text-orange-barapi font-semibold"
               >
                 <BsChatTextFill /> Chat
@@ -105,10 +101,7 @@ export function PopupConfirmProduct({
         </main>
         {openChat && (
           <Popup onClose={() => setOpenChat(false)}>
-            <PopupChat
-              quantityReal={quantity}
-              onSendMessage={() => setOpenChat(false)}
-            />
+            <PopupChat quantityReal={quantity} onSendMessage={() => setOpenChat(false)} />
           </Popup>
         )}
       </>
